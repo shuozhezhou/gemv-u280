@@ -3,8 +3,11 @@
 EECE 5698 — FPGAs in the Cloud, Fall 2026
 Shuozhe Zhou, Yifan Zhu
 
-> **Project Update 1** (due 2026-10-29). The graded snapshot is the fork labeled
-> **project update 1**; this repository keeps moving after the deadline.
+> **Project Update 1** (due 2026-10-29). The graded snapshot is frozen as branch
+> [`project-update-1`](https://github.com/shuozhezhou/gemv-u280/tree/project-update-1)
+> and release/tag [`project-update-1`](https://github.com/shuozhezhou/gemv-u280/releases/tag/project-update-1)
+> (GitHub does not allow forking a repository into the same account). Neither changes
+> after the deadline; `main` keeps moving.
 
 ## 1. Project summary
 

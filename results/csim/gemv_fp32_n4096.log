@@ -1,0 +1,56 @@
+KERNEL=gemv_fp32 STEP=csim CASE="data/n4096_rand_s1 data/n4096_rand_s2 data/n4096_rand_s3" vitis_hls -f scripts/hls.tcl
+
+****** Vitis HLS - High-Level Synthesis from C, C++ and OpenCL v2023.1 (64-bit)
+  **** SW Build 3854077 on May  4 2023
+  **** IP Build 3864474 on Sun May  7 20:36:21 MDT 2023
+  **** SharedData Build 3865790 on Sun May 07 13:33:03 MDT 2023
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source /fpga/Xilinx/Vitis_HLS/2023.1/scripts/vitis_hls/hls.tcl -notrace
+INFO: [HLS 200-10] Running '/fpga/Xilinx/Vitis_HLS/2023.1/bin/unwrapped/lnx64.o/vitis_hls'
+INFO: [HLS 200-10] For user 'shuozhez' on host 'fpga-build2vm-1.cloudlab.umass.edu' (Linux_x86_64 version 5.15.0-198-generic) on Sun Oct 25 20:48:47 MDT 2026
+INFO: [HLS 200-10] On os Ubuntu 22.04.2 LTS
+INFO: [HLS 200-10] In directory '/users/shuozhez/gemv-u280'
+Sourcing Tcl script 'scripts/hls.tcl'
+INFO: [HLS 200-1510] Running: open_project -reset hls_gemv_fp32 
+INFO: [HLS 200-10] Opening and resetting project '/users/shuozhez/gemv-u280/build/hls_gemv_fp32'.
+INFO: [HLS 200-1510] Running: set_top gemv_fp32 
+INFO: [HLS 200-1510] Running: add_files /users/shuozhez/gemv-u280/kernels/gemv_fp32.cpp -cflags -I/users/shuozhez/gemv-u280/kernels -I/users/shuozhez/gemv-u280/common 
+INFO: [HLS 200-10] Adding design file '/users/shuozhez/gemv-u280/kernels/gemv_fp32.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files -tb /users/shuozhez/gemv-u280/tb/tb_gemv_fp32.cpp -cflags -I/users/shuozhez/gemv-u280/kernels -I/users/shuozhez/gemv-u280/common 
+INFO: [HLS 200-10] Adding test bench file '/users/shuozhez/gemv-u280/tb/tb_gemv_fp32.cpp' to the project
+INFO: [HLS 200-1510] Running: open_solution -reset sol -flow_target vitis 
+INFO: [HLS 200-10] Creating and opening solution '/users/shuozhez/gemv-u280/build/hls_gemv_fp32/sol'.
+INFO: [HLS 200-10] Cleaning up the solution database.
+INFO: [HLS 200-1505] Using flow_target 'vitis'
+Resolution: For help on HLS 200-1505 see www.xilinx.com/cgi-bin/docs/rdoc?v=2023.1;t=hls+guidance;d=200-1505.html
+INFO: [HLS 200-435] Setting 'open_solution -flow_target vitis' configuration: config_interface -m_axi_latency=64
+INFO: [HLS 200-435] Setting 'open_solution -flow_target vitis' configuration: config_interface -m_axi_alignment_byte_size=64
+INFO: [HLS 200-435] Setting 'open_solution -flow_target vitis' configuration: config_interface -m_axi_max_widen_bitwidth=512
+INFO: [HLS 200-435] Setting 'open_solution -flow_target vitis' configuration: config_rtl -register_reset_num=3
+INFO: [HLS 200-1510] Running: set_part xcu280-fsvh2892-2L-e 
+INFO: [HLS 200-1611] Setting target device to 'xcu280-fsvh2892-2L-e'
+INFO: [HLS 200-1510] Running: create_clock -period 3.33 -name default 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 3.33ns.
+INFO: [HLS 200-1510] Running: csim_design -argv /users/shuozhez/gemv-u280/data/n4096_rand_s1 /users/shuozhez/gemv-u280/data/n4096_rand_s2 /users/shuozhez/gemv-u280/data/n4096_rand_s3 
+INFO: [SIM 211-2] *************** CSIM start ***************
+INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
+INFO: [HLS 200-2036] Building debug C Simulation binaries
+make[1]: Entering directory '/users/shuozhez/gemv-u280/build/hls_gemv_fp32/sol/csim/build'
+   Compiling ../../../../../tb/tb_gemv_fp32.cpp in debug mode
+   Compiling ../../../../../kernels/gemv_fp32.cpp in debug mode
+   Generating csim.exe
+make[1]: Leaving directory '/users/shuozhez/gemv-u280/build/hls_gemv_fp32/sol/csim/build'
+case /users/shuozhez/gemv-u280/data/n4096_rand_s1 (M=4096, K=4096)
+  4096 values: 4096 bit-exact, 0 mismatches, max err 0 x max|y| (tol 1e-06)
+case /users/shuozhez/gemv-u280/data/n4096_rand_s2 (M=4096, K=4096)
+  4096 values: 4096 bit-exact, 0 mismatches, max err 0 x max|y| (tol 1e-06)
+case /users/shuozhez/gemv-u280/data/n4096_rand_s3 (M=4096, K=4096)
+  4096 values: 4096 bit-exact, 0 mismatches, max err 0 x max|y| (tol 1e-06)
+TEST PASSED
+INFO: [SIM 211-1] CSim done with 0 errors.
+INFO: [SIM 211-3] *************** CSIM finish ***************
+INFO: [HLS 200-111] Finished Command csim_design CPU user time: 2.05 seconds. CPU system time: 0.96 seconds. Elapsed time: 3.15 seconds; current allocated memory: 0.359 MB.
+INFO: [HLS 200-112] Total CPU user time: 4.3 seconds. Total CPU system time: 1.86 seconds. Total elapsed time: 6.89 seconds; peak allocated memory: 1.040 GB.
+INFO: [Common 17-206] Exiting vitis_hls at Sun Oct 25 20:48:53 2026...

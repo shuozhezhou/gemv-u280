@@ -27,6 +27,7 @@ vitis_hls.log
 # Large generated data: only the small test cases are committed.
 # Re-create these with scripts/gen_data.py (fixed seeds, see README).
 data/n4096*/
+data/small/
 
 # Python / editor
 __pycache__/

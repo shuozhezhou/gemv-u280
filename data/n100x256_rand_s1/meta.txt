@@ -1,0 +1,5 @@
+M 100
+K 256
+group 64
+seed 1
+kind rand

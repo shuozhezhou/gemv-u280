@@ -31,7 +31,7 @@ kind rand
 | `xq.i8.bin` | int8 | K | Quantized activation |
 | `sx.f32.bin` | float32 | 1 | Activation scale |
 | `y_int8.f32.bin` | float32 | M | Golden output of the INT8 kernel (bit-exact target) |
-| `y_ref.f64.bin` | float64 | M | `W @ x` in float64 from the original weights (accuracy reference only) |
+| `y_ref.f64.bin` | float64 | M | `W x` in float64 from the original weights, summed sequentially over k (accuracy reference only; no BLAS, so it is identical on every machine) |
 
 ## Quantization
 

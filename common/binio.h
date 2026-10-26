@@ -64,23 +64,25 @@ void write_bin(const std::string& path, const T* data, size_t n) {
     f.write(reinterpret_cast<const char*>(data), n * sizeof(T));
 }
 
-// Compares out against golden. tol = 0 means bit-exact.
-// Prints the first few mismatches and returns their count.
+// Compares out against golden and returns the number of mismatches.
+// tol = 0: bit-exact. tol > 0: |out - golden| <= tol * max|golden| (error relative
+// to the largest output, so outputs close to zero do not give huge relative errors).
+// Always reports how many values are bit-identical.
 inline int compare_f32(const float* out, const float* golden, int n, float tol,
                        int max_print = 10) {
-    int bad = 0;
+    float scale = 0.0f;
+    for (int i = 0; i < n; i++) scale = std::fmax(scale, std::fabs(golden[i]));
+    if (scale == 0.0f) scale = 1.0f;
+
+    int bad = 0, exact = 0;
     float worst = 0.0f;
     for (int i = 0; i < n; i++) {
-        bool ok;
-        float rel = 0.0f;
-        if (tol == 0.0f) {
-            ok = std::memcmp(&out[i], &golden[i], sizeof(float)) == 0;
-        } else {
-            float denom = std::fmax(std::fabs(golden[i]), 1e-30f);
-            rel = std::fabs(out[i] - golden[i]) / denom;
-            ok = rel <= tol || std::fabs(out[i] - golden[i]) <= 1e-30f;
-        }
-        if (rel > worst) worst = rel;
+        bool same = std::memcmp(&out[i], &golden[i], sizeof(float)) == 0;
+        float err = std::fabs(out[i] - golden[i]) / scale;
+        if (std::isnan(err)) err = INFINITY;
+        exact += same;
+        if (err > worst) worst = err;
+        bool ok = (tol == 0.0f) ? same : (err <= tol);
         if (!ok) {
             if (bad < max_print)
                 std::printf("  mismatch y[%d]: got %.9g, expected %.9g\n", i, out[i],
@@ -88,7 +90,7 @@ inline int compare_f32(const float* out, const float* golden, int n, float tol,
             bad++;
         }
     }
-    std::printf("  compared %d values, %d mismatches, max rel err %.3g (tol %g)\n", n,
-                bad, worst, tol);
+    std::printf("  %d values: %d bit-exact, %d mismatches, max err %.3g x max|y| (tol %g)\n",
+                n, exact, bad, worst, tol);
     return bad;
 }

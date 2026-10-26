@@ -1,0 +1,5 @@
+M 64
+K 64
+group 64
+seed 1
+kind pm127

@@ -1,0 +1,38 @@
+# Vitis / Vivado build outputs
+build/
+_x/
+.Xil/
+.ipcache/
+*.xo
+*.xclbin
+*.ltx
+*.link_summary
+*.compile_summary
+*.run_summary
+*.jou
+*.log
+*.wdb
+*.wcfg
+*.protoinst
+emconfig.json
+xrt.ini
+opencl_trace.csv
+summary.csv
+device_trace_*.csv
+native_trace.csv
+xrt.run_summary
+v++_*.log
+vitis_hls.log
+
+# Large generated data: only the small test cases are committed.
+# Re-create these with scripts/gen_data.py (fixed seeds, see README).
+data/n4096*/
+
+# Python / editor
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+
+# Keep the measured logs we copy into results/ on purpose
+!results/**/*.log

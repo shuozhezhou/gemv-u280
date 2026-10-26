@@ -1,0 +1,14 @@
+case data/n4096_rand_s1: M=4096 K=4096 kind=rand seed=1, kernel gemv_fp32, 100 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 251.2 ms
+
+kernel time   avg 391.667 ms  min 391.663 ms  max 391.680 ms  (100 runs)
+bytes read    64.0 MiB
+bandwidth     0.17 GB/s (bytes read / avg kernel time)
+PCIe          host->device 16.79 ms, device->host 0.029 ms
+CPU (1 thread, same op order) 54.385 ms
+
+FPGA vs golden:
+  4096 values: 4096 bit-exact, 0 mismatches, max err 0 x max|y| (tol 1e-06)
+CPU  vs golden:
+  4096 values: 4096 bit-exact, 0 mismatches, max err 0 x max|y| (tol 1e-06)
+TEST PASSED

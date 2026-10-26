@@ -1,0 +1,14 @@
+case data/n64x128_zero_s1: M=64 K=128 kind=zero seed=1, kernel gemv_fp32, 100 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 84.3 ms
+
+kernel time   avg 0.221 ms  min 0.217 ms  max 0.233 ms  (100 runs)
+bytes read    0.0 MiB
+bandwidth     0.15 GB/s (bytes read / avg kernel time)
+PCIe          host->device 0.03 ms, device->host 0.021 ms
+CPU (1 thread, same op order) 0.025 ms
+
+FPGA vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 1e-06)
+CPU  vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 1e-06)
+TEST PASSED

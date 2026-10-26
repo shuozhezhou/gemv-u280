@@ -1,0 +1,14 @@
+case data/n64_onehot_s1: M=64 K=64 kind=onehot seed=1, kernel gemv_fp32, 100 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 235.0 ms
+
+kernel time   avg 0.128 ms  min 0.122 ms  max 0.140 ms  (100 runs)
+bytes read    0.0 MiB
+bandwidth     0.13 GB/s (bytes read / avg kernel time)
+PCIe          host->device 0.03 ms, device->host 0.010 ms
+CPU (1 thread, same op order) 0.004 ms
+
+FPGA vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 1e-06)
+CPU  vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 1e-06)
+TEST PASSED

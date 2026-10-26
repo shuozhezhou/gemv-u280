@@ -1,0 +1,9 @@
+pc156.gemv-run.octfpga-pg0.cloudlab.umass.edu
+Sun Oct 25 10:47:42 PM MDT 2026
+Model name:                              Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz
+  Version              : #197-Ubuntu SMP Fri Jul 17 19:17:01 UTC 2026
+  Version              : 2.15.225
+  Branch               : 2023.1
+  Hash                 : adf27adb3cfadc6e4c41d6db814159f1329b24f3
+  Hash Date            : 2023-05-03 10:13:19
+[0000:3b:00.1]  :  xilinx_u280_gen3x16_xdma_base_1  283BAB8F-654D-8674-968F-4DA57F7FA5D7  user(inst=128)  Yes            

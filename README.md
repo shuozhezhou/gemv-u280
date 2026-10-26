@@ -1,6 +1,7 @@
 # Quantized GEMV for LLM Inference on the Alveo U280
 
 EECE 5698 — FPGAs in the Cloud, Fall 2026
+
 Shuozhe Zhou, Yifan Zhu
 
 > **Project Update 1** (due 2026-10-29). The graded snapshot is frozen as branch

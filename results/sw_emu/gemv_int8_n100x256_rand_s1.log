@@ -1,0 +1,23 @@
+case data/n100x256_rand_s1: M=100 K=256 kind=rand seed=1, kernel gemv_int8, 1 timed run(s)
+device: xilinx_u280_gen3x16_xdma_1_202211_1, xclbin loaded in 48.6 ms
+Kernel Name: gemv_int8_1, CU Number: 0, Thread creation status: success
+Kernel Name: gemv_int8_1, CU Number: 0, State: Start
+Kernel Name: gemv_int8_1, CU Number: 0, State: Running
+Kernel Name: gemv_int8_1, CU Number: 0, State: Idle
+Kernel Name: gemv_int8_1, CU Number: 0, State: Start
+Kernel Name: gemv_int8_1, CU Number: 0, State: Running
+Kernel Name: gemv_int8_1, CU Number: 0, State: Idle
+device process sw_emu_device done
+Kernel Name: gemv_int8_1, CU Number: 0, Status: Shutdown
+
+kernel time   avg 22.379 ms  min 22.379 ms  max 22.379 ms  (1 runs)
+bytes read    0.0 MiB
+bandwidth     0.00 GB/s (bytes read / avg kernel time)
+PCIe          host->device 0.72 ms, device->host 0.106 ms
+CPU (1 thread, same op order) 0.014 ms
+
+FPGA vs golden:
+  100 values: 100 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+CPU  vs golden:
+  100 values: 100 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

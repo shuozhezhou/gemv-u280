@@ -1,0 +1,14 @@
+case data/n64_pm127_s1: M=64 K=64 kind=pm127 seed=1, kernel gemv_int8, 100 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 84.4 ms
+
+kernel time   avg 0.051 ms  min 0.048 ms  max 0.067 ms  (100 runs)
+bytes read    0.0 MiB
+bandwidth     0.09 GB/s (bytes read / avg kernel time)
+PCIe          host->device 0.04 ms, device->host 0.011 ms
+CPU (1 thread, same op order) 0.002 ms
+
+FPGA vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+CPU  vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

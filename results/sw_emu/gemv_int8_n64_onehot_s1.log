@@ -1,0 +1,23 @@
+case data/n64_onehot_s1: M=64 K=64 kind=onehot seed=1, kernel gemv_int8, 1 timed run(s)
+device: xilinx_u280_gen3x16_xdma_1_202211_1, xclbin loaded in 49.1 ms
+Kernel Name: gemv_int8_1, CU Number: 0, Thread creation status: success
+Kernel Name: gemv_int8_1, CU Number: 0, State: Start
+Kernel Name: gemv_int8_1, CU Number: 0, State: Running
+Kernel Name: gemv_int8_1, CU Number: 0, State: Idle
+Kernel Name: gemv_int8_1, CU Number: 0, State: Start
+Kernel Name: gemv_int8_1, CU Number: 0, State: Running
+Kernel Name: gemv_int8_1, CU Number: 0, State: Idle
+device process sw_emu_device done
+Kernel Name: gemv_int8_1, CU Number: 0, Status: Shutdown
+
+kernel time   avg 8.807 ms  min 8.807 ms  max 8.807 ms  (1 runs)
+bytes read    0.0 MiB
+bandwidth     0.00 GB/s (bytes read / avg kernel time)
+PCIe          host->device 0.41 ms, device->host 0.104 ms
+CPU (1 thread, same op order) 0.003 ms
+
+FPGA vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+CPU  vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

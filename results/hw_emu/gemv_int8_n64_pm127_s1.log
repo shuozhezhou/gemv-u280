@@ -1,0 +1,23 @@
+case data/n64_pm127_s1: M=64 K=64 kind=pm127 seed=1, kernel gemv_int8, 1 timed run(s)
+INFO: [HW-EMU 05] Path of the simulation directory : /users/shuozhez/gemv-u280/build/.run/73145/hw_emu/device0/binary_0/behav_waveform/xsim
+
+ server socket name is	/tmp/shuozhez/device0_0_73145
+INFO: [HW-EMU 01] Hardware emulation runs simulation underneath. Using a large data set will result in long simulation times. It is recommended that a small dataset is used for faster execution. The flow uses approximate models for Global memories and interconnect and hence the performance data generated is approximate.
+configuring dataflow mode with ert polling
+scheduler config ert(1), dataflow(1), slots(16), cudma(0), cuisr(0), cdma(0), cus(1)
+device: xilinx_u280_gen3x16_xdma_1_202211_1, xclbin loaded in 21703.7 ms
+
+kernel time   avg 3000.495 ms  min 3000.495 ms  max 3000.495 ms  (1 runs)
+bytes read    0.0 MiB
+bandwidth     0.00 GB/s (bytes read / avg kernel time)
+PCIe          host->device 61.77 ms, device->host 20.672 ms
+CPU (1 thread, same op order) 0.007 ms
+
+FPGA vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+CPU  vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED
+INFO: [HW-EMU 06-0] Waiting for the simulator process to exit
+INFO: [HW-EMU 06-1] All the simulator processes exited successfully
+INFO: [HW-EMU 07-0] Please refer the path "/users/shuozhez/gemv-u280/build/.run/73145/hw_emu/device0/binary_0/behav_waveform/xsim/simulate.log" for more detailed simulation infos, errors and warnings.

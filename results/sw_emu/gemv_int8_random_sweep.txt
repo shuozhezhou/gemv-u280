@@ -1,0 +1,1 @@
+sw_emu random sweep (data/small, 100 cases): 100 passed, 0 failed

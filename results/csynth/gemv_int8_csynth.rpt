@@ -1,0 +1,332 @@
+
+
+================================================================
+== Synthesis Summary Report of 'gemv_int8'
+================================================================
++ General Information: 
+    * Date:           Sun Oct 25 22:53:41 2026
+    * Version:        2023.1 (Build 3854077 on May  4 2023)
+    * Project:        hls_gemv_int8
+    * Solution:       sol (Vitis Kernel Flow Target)
+    * Product family: virtexuplusHBM
+    * Target device:  xcu280-fsvh2892-2L-e
+    
+
++ Performance & Resource Estimates: 
+    
+    PS: '+' for module; 'o' for loop; '*' for dataflow
+    +-------------------------------+--------+-------+---------+-----------+----------+---------+------+----------+---------+----------+-------------+------------+-----+
+    |            Modules            |  Issue |       | Latency |  Latency  | Iteration|         | Trip |          |         |          |             |            |     |
+    |            & Loops            |  Type  | Slack | (cycles)|    (ns)   |  Latency | Interval| Count| Pipelined|  BRAM   |    DSP   |      FF     |     LUT    | URAM|
+    +-------------------------------+--------+-------+---------+-----------+----------+---------+------+----------+---------+----------+-------------+------------+-----+
+    |+ gemv_int8                    |  Timing|  -0.00|  2244753|  7.475e+06|         -|  2244754|     -|        no|  70 (1%)|  39 (~0%)|  12774 (~0%)|  13505 (1%)|    -|
+    | + gemv_int8_Pipeline_load_x   |  Timing|  -0.00|       67|    223.110|         -|       67|     -|        no|        -|         -|    539 (~0%)|    99 (~0%)|    -|
+    |  o load_x                     |       -|   2.43|       65|    216.450|         3|        1|    64|       yes|        -|         -|            -|           -|    -|
+    | o rows                        |       -|   2.43|  2244608|  7.475e+06|       548|        -|  4096|        no|        -|         -|            -|           -|    -|
+    |  + gemv_int8_Pipeline_groups  |  Timing|  -0.00|      472|  1.572e+03|         -|      472|     -|        no|        -|  34 (~0%)|   2449 (~0%)|  2527 (~0%)|    -|
+    |   o groups                    |      II|   2.43|      470|  1.565e+03|        30|        7|    64|       yes|        -|         -|            -|           -|    -|
+    +-------------------------------+--------+-------+---------+-----------+----------+---------+------+----------+---------+----------+-------------+------------+-----+
+
+
+================================================================
+== HW Interfaces
+================================================================
+* M_AXI
++-------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+| Interface   | Data Width | Address Width | Latency | Offset | Register | Max Widen | Max Read     | Max Write    | Num Read    | Num Write   | Resource Estimate |
+|             | (SW->HW)   |               |         |        |          | Bitwidth  | Burst Length | Burst Length | Outstanding | Outstanding |                   |
++-------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+| m_axi_gmem0 | 512 -> 512 | 64            | 64      | slave  | 0        | 512       | 64           | 16           | 16          | 16          | BRAM=30           |
+| m_axi_gmem1 | 32 -> 32   | 64            | 64      | slave  | 0        | 512       | 16           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem2 | 512 -> 512 | 64            | 64      | slave  | 0        | 512       | 16           | 16           | 16          | 16          | BRAM=30           |
++-------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+
+* S_AXILITE Interfaces
++---------------+------------+---------------+--------+----------+
+| Interface     | Data Width | Address Width | Offset | Register |
++---------------+------------+---------------+--------+----------+
+| s_axi_control | 32         | 7             | 16     | 0        |
++---------------+------------+---------------+--------+----------+
+
+* S_AXILITE Registers
++---------------+----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+| Interface     | Register | Offset | Width | Access | Description                      | Bit Fields                                                                         |
++---------------+----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+| s_axi_control | CTRL     | 0x00   | 32    | RW     | Control signals                  | 0=AP_START 1=AP_DONE 2=AP_IDLE 3=AP_READY 4=AP_CONTINUE 7=AUTO_RESTART 9=INTERRUPT |
+| s_axi_control | GIER     | 0x04   | 32    | RW     | Global Interrupt Enable Register | 0=Enable                                                                           |
+| s_axi_control | IP_IER   | 0x08   | 32    | RW     | IP Interrupt Enable Register     | 0=CHAN0_INT_EN 1=CHAN1_INT_EN                                                      |
+| s_axi_control | IP_ISR   | 0x0c   | 32    | RW     | IP Interrupt Status Register     | 0=CHAN0_INT_ST 1=CHAN1_INT_ST                                                      |
+| s_axi_control | Wq_1     | 0x10   | 32    | W      | Data signal of Wq                |                                                                                    |
+| s_axi_control | Wq_2     | 0x14   | 32    | W      | Data signal of Wq                |                                                                                    |
+| s_axi_control | s_1      | 0x1c   | 32    | W      | Data signal of s                 |                                                                                    |
+| s_axi_control | s_2      | 0x20   | 32    | W      | Data signal of s                 |                                                                                    |
+| s_axi_control | xq_1     | 0x28   | 32    | W      | Data signal of xq                |                                                                                    |
+| s_axi_control | xq_2     | 0x2c   | 32    | W      | Data signal of xq                |                                                                                    |
+| s_axi_control | sx       | 0x34   | 32    | W      | Data signal of sx                |                                                                                    |
+| s_axi_control | y_1      | 0x3c   | 32    | W      | Data signal of y                 |                                                                                    |
+| s_axi_control | y_2      | 0x40   | 32    | W      | Data signal of y                 |                                                                                    |
+| s_axi_control | M        | 0x48   | 32    | W      | Data signal of M                 |                                                                                    |
+| s_axi_control | K        | 0x50   | 32    | W      | Data signal of K                 |                                                                                    |
++---------------+----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+
+* TOP LEVEL CONTROL
++-----------+---------------+-----------+
+| Interface | Type          | Ports     |
++-----------+---------------+-----------+
+| ap_clk    | clock         | ap_clk    |
+| ap_rst_n  | reset         | ap_rst_n  |
+| interrupt | interrupt     | interrupt |
+| ap_ctrl   | ap_ctrl_chain |           |
++-----------+---------------+-----------+
+
+
+================================================================
+== SW I/O Information
+================================================================
+* Top Function Arguments
++----------+-----------+----------------------+
+| Argument | Direction | Datatype             |
++----------+-----------+----------------------+
+| Wq       | in        | ap_uint<512> const * |
+| s        | in        | float const *        |
+| xq       | inout     | ap_uint<512> const * |
+| sx       | in        | float                |
+| y        | inout     | float*               |
+| M        | in        | int                  |
+| K        | in        | int                  |
++----------+-----------+----------------------+
+
+* SW-to-HW Mapping
++----------+---------------+-----------+----------+--------------------------------+
+| Argument | HW Interface  | HW Type   | HW Usage | HW Info                        |
++----------+---------------+-----------+----------+--------------------------------+
+| Wq       | m_axi_gmem0   | interface |          |                                |
+| Wq       | s_axi_control | register  | offset   | name=Wq_1 offset=0x10 range=32 |
+| Wq       | s_axi_control | register  | offset   | name=Wq_2 offset=0x14 range=32 |
+| s        | m_axi_gmem1   | interface |          |                                |
+| s        | s_axi_control | register  | offset   | name=s_1 offset=0x1c range=32  |
+| s        | s_axi_control | register  | offset   | name=s_2 offset=0x20 range=32  |
+| xq       | m_axi_gmem2   | interface |          |                                |
+| xq       | s_axi_control | register  | offset   | name=xq_1 offset=0x28 range=32 |
+| xq       | s_axi_control | register  | offset   | name=xq_2 offset=0x2c range=32 |
+| sx       | s_axi_control | register  |          | name=sx offset=0x34 range=32   |
+| y        | m_axi_gmem2   | interface |          |                                |
+| y        | s_axi_control | register  | offset   | name=y_1 offset=0x3c range=32  |
+| y        | s_axi_control | register  | offset   | name=y_2 offset=0x40 range=32  |
+| M        | s_axi_control | register  |          | name=M offset=0x48 range=32    |
+| K        | s_axi_control | register  |          | name=K offset=0x50 range=32    |
++----------+---------------+-----------+----------+--------------------------------+
+
+
+================================================================
+== M_AXI Burst Information
+================================================================
+ Note: All burst requests might be further partitioned into multiple requests during RTL generation based on max_read_burst_length or max_write_burst_length settings.
+
+* Inferred Burst Summary
++--------------+-----------+----------+-------+--------+------------------------------------------------------+
+| HW Interface | Direction | Length   | Width | Loop   | Loop Location                                        |
++--------------+-----------+----------+-------+--------+------------------------------------------------------+
+| m_axi_gmem0  | read      | variable | 512   |        |                                                      |
+| m_axi_gmem1  | read      | variable | 32    |        |                                                      |
+| m_axi_gmem2  | read      | variable | 512   | load_x | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:36:5 |
++--------------+-----------+----------+-------+--------+------------------------------------------------------+
+
+* All M_AXI Variable Accesses
++--------------+----------+-------------------------------------------------------+-----------+--------------+----------+--------+------------------------------------------------------+------------+----------------------------------------------------------------------------------------------------------+
+| HW Interface | Variable | Access Location                                       | Direction | Burst Status | Length   | Loop   | Loop Location                                        | Resolution | Problem                                                                                                  |
++--------------+----------+-------------------------------------------------------+-----------+--------------+----------+--------+------------------------------------------------------+------------+----------------------------------------------------------------------------------------------------------+
+| m_axi_gmem0  | Wq       | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:43:5  | read      | Widen Fail   |          | groups | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:47:9 | 214-353    | Could not widen since type i512 size is greater than or equal to the max_widen_bitwidth threshold of 512 |
+| m_axi_gmem0  | Wq       | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:43:5  | read      | Inferred     | variable | rows   | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:43:5 |            |                                                                                                          |
+| m_axi_gmem1  | s        | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:51:26 | read      | Widen Fail   |          | groups | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:47:9 | 214-235    | Start index of the access is unaligned                                                                   |
+| m_axi_gmem1  | s        | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:51:26 | read      | Widen Fail   |          | groups | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:47:9 | 214-234    | Sequential access length is not divisible by 2                                                           |
+| m_axi_gmem1  | s        | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:51:26 | read      | Inferred     | variable | rows   | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:43:5 |            |                                                                                                          |
+| m_axi_gmem2  | xq       | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:39:10 | read      | Widen Fail   |          | load_x | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:36:5 | 214-353    | Could not widen since type i512 size is greater than or equal to the max_widen_bitwidth threshold of 512 |
+| m_axi_gmem2  | xq       | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:39:10 | read      | Inferred     | variable | load_x | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:36:5 |            |                                                                                                          |
+| m_axi_gmem2  | y        | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:54:14 | write     | Widen Fail   |          | rows   | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:43:5 | 214-234    | Sequential access length is not divisible by 2                                                           |
+| m_axi_gmem2  | y        | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:54:14 | write     | Inferred     | variable | rows   | /users/shuozhez/gemv-u280/kernels/gemv_int8.cpp:43:5 |            |                                                                                                          |
++--------------+----------+-------------------------------------------------------+-----------+--------------+----------+--------+------------------------------------------------------+------------+----------------------------------------------------------------------------------------------------------+
+
+    * Resolution URL: www.xilinx.com/cgi-bin/docs/rdoc?v=2023.1;t=hls+guidance;d=XXX-YYY.html (replace XXX-YYY with column value)
+
+================================================================
+== Bind Op Report
+================================================================
++--------------------------------------+-----+--------+-------------+------+---------+---------+
+| Name                                 | DSP | Pragma | Variable    | Op   | Impl    | Latency |
++--------------------------------------+-----+--------+-------------+------+---------+---------+
+| + gemv_int8                          | 39  |        |             |      |         |         |
+|   sub_ln32_fu_273_p2                 | -   |        | sub_ln32    | sub  | fabric  | 0       |
+|   sub_ln32_1_fu_323_p2               | -   |        | sub_ln32_1  | sub  | fabric  | 0       |
+|   mul_27s_32s_32_2_1_U84             | 2   |        | mul_ln43    | mul  | auto    | 1       |
+|   add_ln43_fu_452_p2                 | -   |        | add_ln43    | add  | fabric  | 0       |
+|   fmul_32ns_32ns_32_4_max_dsp_1_U83  | 3   |        | mul         | fmul | maxdsp  | 3       |
+|   add_ln54_fu_482_p2                 | -   |        | add_ln54    | add  | fabric  | 0       |
+|   add_ln54_1_fu_487_p2               | -   |        | add_ln54_1  | add  | fabric  | 0       |
+|  + gemv_int8_Pipeline_load_x         | 0   |        |             |      |         |         |
+|    add_ln36_fu_112_p2                | -   |        | add_ln36    | add  | fabric  | 0       |
+|  + gemv_int8_Pipeline_groups         | 34  |        |             |      |         |         |
+|    add_ln47_fu_2127_p2               | -   |        | add_ln47    | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U40   | 1   |        | P           | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U8               | -   |        | mul_ln20    | mul  | auto    | 0       |
+|    mul_8s_8s_16_1_1_U9               | -   |        | mul_ln20_1  | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U41   | 1   |        | mul_ln20_2  | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U10              | -   |        | mul_ln20_3  | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U42   | 1   |        | mul_ln20_4  | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U11              | -   |        | mul_ln20_5  | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U43   | 1   |        | mul_ln20_6  | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U12              | -   |        | mul_ln20_7  | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U44   | 1   |        | mul_ln20_8  | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U13              | -   |        | mul_ln20_9  | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U45   | 1   |        | mul_ln20_10 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U14              | -   |        | mul_ln20_11 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U46   | 1   |        | mul_ln20_12 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U15              | -   |        | mul_ln20_13 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U47   | 1   |        | mul_ln20_14 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U16              | -   |        | mul_ln20_15 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U48   | 1   |        | mul_ln20_16 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U17              | -   |        | mul_ln20_17 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U49   | 1   |        | mul_ln20_18 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U18              | -   |        | mul_ln20_19 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U50   | 1   |        | mul_ln20_20 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U19              | -   |        | mul_ln20_21 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U51   | 1   |        | mul_ln20_22 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U20              | -   |        | mul_ln20_23 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U52   | 1   |        | mul_ln20_24 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U21              | -   |        | mul_ln20_25 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U53   | 1   |        | mul_ln20_26 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U22              | -   |        | mul_ln20_27 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U54   | 1   |        | mul_ln20_28 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U23              | -   |        | mul_ln20_29 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U55   | 1   |        | mul_ln20_30 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U24              | -   |        | mul_ln20_31 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U56   | 1   |        | mul_ln20_32 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U25              | -   |        | mul_ln20_33 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U57   | 1   |        | mul_ln20_34 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U26              | -   |        | mul_ln20_35 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U58   | 1   |        | mul_ln20_36 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U27              | -   |        | mul_ln20_37 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U59   | 1   |        | mul_ln20_38 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U28              | -   |        | mul_ln20_39 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U60   | 1   |        | mul_ln20_40 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U29              | -   |        | mul_ln20_41 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U61   | 1   |        | mul_ln20_42 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U30              | -   |        | mul_ln20_43 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U62   | 1   |        | mul_ln20_44 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U31              | -   |        | mul_ln20_45 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U63   | 1   |        | mul_ln20_46 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U32              | -   |        | mul_ln20_47 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U64   | 1   |        | mul_ln20_48 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U33              | -   |        | mul_ln20_49 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U65   | 1   |        | mul_ln20_50 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U34              | -   |        | mul_ln20_51 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U66   | 1   |        | mul_ln20_52 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U35              | -   |        | mul_ln20_53 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U67   | 1   |        | mul_ln20_54 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U36              | -   |        | mul_ln20_55 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U68   | 1   |        | mul_ln20_56 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U37              | -   |        | mul_ln20_57 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U69   | 1   |        | mul_ln20_58 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U38              | -   |        | mul_ln20_59 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U70   | 1   |        | mul_ln20_60 | mul  | dsp48   | 3       |
+|    mul_8s_8s_16_1_1_U39              | -   |        | mul_ln20_61 | mul  | auto    | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U71   | 1   |        | mul_ln20_62 | mul  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U40   | 1   |        | add_ln20    | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U41   | 1   |        | add_ln20_1  | add  | dsp48   | 3       |
+|    add_ln20_2_fu_2095_p2             | -   |        | add_ln20_2  | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U42   | 1   |        | add_ln20_3  | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U43   | 1   |        | add_ln20_4  | add  | dsp48   | 3       |
+|    add_ln20_5_fu_2111_p2             | -   |        | add_ln20_5  | add  | fabric  | 0       |
+|    add_ln20_6_fu_2121_p2             | -   |        | add_ln20_6  | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U44   | 1   |        | add_ln20_7  | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U45   | 1   |        | add_ln20_8  | add  | dsp48   | 3       |
+|    add_ln20_9_fu_2243_p2             | -   |        | add_ln20_9  | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U46   | 1   |        | add_ln20_10 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U47   | 1   |        | add_ln20_11 | add  | dsp48   | 3       |
+|    add_ln20_12_fu_2259_p2            | -   |        | add_ln20_12 | add  | fabric  | 0       |
+|    add_ln20_13_fu_2269_p2            | -   |        | add_ln20_13 | add  | fabric  | 0       |
+|    add_ln20_14_fu_2403_p2            | -   |        | add_ln20_14 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U48   | 1   |        | add_ln20_15 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U49   | 1   |        | add_ln20_16 | add  | dsp48   | 3       |
+|    add_ln20_17_fu_2281_p2            | -   |        | add_ln20_17 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U50   | 1   |        | add_ln20_18 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U51   | 1   |        | add_ln20_19 | add  | dsp48   | 3       |
+|    add_ln20_20_fu_2418_p2            | -   |        | add_ln20_20 | add  | fabric  | 0       |
+|    add_ln20_21_fu_2428_p2            | -   |        | add_ln20_21 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U52   | 1   |        | add_ln20_22 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U53   | 1   |        | add_ln20_23 | add  | dsp48   | 3       |
+|    add_ln20_24_fu_2440_p2            | -   |        | add_ln20_24 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U54   | 1   |        | add_ln20_25 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U55   | 1   |        | add_ln20_26 | add  | dsp48   | 3       |
+|    add_ln20_27_fu_2506_p2            | -   |        | add_ln20_27 | add  | fabric  | 0       |
+|    add_ln20_28_fu_2516_p2            | -   |        | add_ln20_28 | add  | fabric  | 0       |
+|    add_ln20_29_fu_2584_p2            | -   |        | add_ln20_29 | add  | fabric  | 0       |
+|    add_ln20_30_fu_2594_p2            | -   |        | add_ln20_30 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U56   | 1   |        | add_ln20_31 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U57   | 1   |        | add_ln20_32 | add  | dsp48   | 3       |
+|    add_ln20_33_fu_2528_p2            | -   |        | add_ln20_33 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U58   | 1   |        | add_ln20_34 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U59   | 1   |        | add_ln20_35 | add  | dsp48   | 3       |
+|    add_ln20_36_fu_2544_p2            | -   |        | add_ln20_36 | add  | fabric  | 0       |
+|    add_ln20_37_fu_2554_p2            | -   |        | add_ln20_37 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U60   | 1   |        | add_ln20_38 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U61   | 1   |        | add_ln20_39 | add  | dsp48   | 3       |
+|    add_ln20_40_fu_2606_p2            | -   |        | add_ln20_40 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U62   | 1   |        | add_ln20_41 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U63   | 1   |        | add_ln20_42 | add  | dsp48   | 3       |
+|    add_ln20_43_fu_2622_p2            | -   |        | add_ln20_43 | add  | fabric  | 0       |
+|    add_ln20_44_fu_2632_p2            | -   |        | add_ln20_44 | add  | fabric  | 0       |
+|    add_ln20_45_fu_2650_p2            | -   |        | add_ln20_45 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U64   | 1   |        | add_ln20_46 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U65   | 1   |        | add_ln20_47 | add  | dsp48   | 3       |
+|    add_ln20_48_fu_2662_p2            | -   |        | add_ln20_48 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U66   | 1   |        | add_ln20_49 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U67   | 1   |        | add_ln20_50 | add  | dsp48   | 3       |
+|    add_ln20_51_fu_2678_p2            | -   |        | add_ln20_51 | add  | fabric  | 0       |
+|    add_ln20_52_fu_2688_p2            | -   |        | add_ln20_52 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U68   | 1   |        | add_ln20_53 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U69   | 1   |        | add_ln20_54 | add  | dsp48   | 3       |
+|    add_ln20_55_fu_2700_p2            | -   |        | add_ln20_55 | add  | fabric  | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U70   | 1   |        | add_ln20_56 | add  | dsp48   | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U71   | 1   |        | add_ln20_57 | add  | dsp48   | 3       |
+|    add_ln20_58_fu_2715_p2            | -   |        | add_ln20_58 | add  | fabric  | 0       |
+|    add_ln20_59_fu_2725_p2            | -   |        | add_ln20_59 | add  | fabric  | 0       |
+|    add_ln20_60_fu_2743_p2            | -   |        | add_ln20_60 | add  | fabric  | 0       |
+|    add_ln20_61_fu_2753_p2            | -   |        | add_ln20_61 | add  | fabric  | 0       |
+|    P_1_fu_2763_p2                    | -   |        | P_1         | add  | fabric  | 0       |
+|    fadd_32ns_32ns_32_7_full_dsp_1_U5 | 2   |        | acc_1       | fadd | fulldsp | 6       |
++--------------------------------------+-----+--------+-------------+------+---------+---------+
+
+
+================================================================
+== Bind Storage Report
+================================================================
++-------------+------+------+--------+----------+---------+------+---------+
+| Name        | BRAM | URAM | Pragma | Variable | Storage | Impl | Latency |
++-------------+------+------+--------+----------+---------+------+---------+
+| + gemv_int8 | 70   | 0    |        |          |         |      |         |
+|   xbuf_U    | 8    | -    |        | xbuf     | ram_1p  | auto | 1       |
++-------------+------+------+--------+----------+---------+------+---------+
+
+
+================================================================
+== Pragma Report
+================================================================
+* Valid Pragma Syntax
++----------------+-------------------------------------------------------------------------------------+------------------------------------------+
+| Type           | Options                                                                             | Location                                 |
++----------------+-------------------------------------------------------------------------------------+------------------------------------------+
+| inline         |                                                                                     | ../kernels/gemv_int8.cpp:14 in group_dot |
+| unroll         |                                                                                     | ../kernels/gemv_int8.cpp:17 in group_dot |
+| interface      | m_axi port = Wq bundle = gmem0 max_read_burst_length = 64 num_read_outstanding = 16 | ../kernels/gemv_int8.cpp:27 in gemv_int8 |
+| interface      | m_axi port = s bundle = gmem1                                                       | ../kernels/gemv_int8.cpp:28 in gemv_int8 |
+| interface      | m_axi port = xq bundle = gmem2                                                      | ../kernels/gemv_int8.cpp:29 in gemv_int8 |
+| interface      | m_axi port = y bundle = gmem2                                                       | ../kernels/gemv_int8.cpp:30 in gemv_int8 |
+| pipeline       | II = 1                                                                              | ../kernels/gemv_int8.cpp:37 in gemv_int8 |
+| loop_tripcount | min = 1 max = 64                                                                    | ../kernels/gemv_int8.cpp:38 in gemv_int8 |
+| loop_tripcount | min = 64 max = 4096                                                                 | ../kernels/gemv_int8.cpp:44 in gemv_int8 |
+| pipeline       |                                                                                     | ../kernels/gemv_int8.cpp:48 in gemv_int8 |
+| loop_tripcount | min = 1 max = 64                                                                    | ../kernels/gemv_int8.cpp:49 in gemv_int8 |
++----------------+-------------------------------------------------------------------------------------+------------------------------------------+
+
+

@@ -1,0 +1,14 @@
+case data/sq2048: M=2048 K=2048 kind=rand seed=1, kernel gemv_int8_ps, 2000 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 85.3 ms
+
+kernel time   avg 0.346 ms  min 0.339 ms  max 0.361 ms  (2000 runs)
+bytes read    4.3 MiB
+bandwidth     12.89 GB/s (bytes read / avg kernel time)
+PCIe          host->device 1.05 ms, device->host 0.015 ms
+CPU (1 thread, same op order) 2.583 ms
+
+FPGA vs golden:
+  2048 values: 2048 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+CPU  vs golden:
+  2048 values: 2048 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

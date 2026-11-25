@@ -1,0 +1,4 @@
+[model] 12 layers, 123.5 M linear weights, quantized in 1.2 s
+[smooth] alpha=0.5, calibrated on 194 tokens
+TEXT >>> Field-programmable gate arrays are used to store and retrieve data from a computer. The data is then sent to a computer and stored in a memory.\n\nThe computer then sends the data to a computer that is connected to the Internet. The computer then sends the data
+RESULT gen backend=golden smooth=0.5 prompt_tokens=7 new_tokens=48 steps=54 wall=41.00s (1.32 steps/s) gemvs=2646 new_tok_per_s=1.17

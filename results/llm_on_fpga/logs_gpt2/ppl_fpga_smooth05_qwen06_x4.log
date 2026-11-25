@@ -1,0 +1,5 @@
+[fpga] gemv_int8_ps x4 loaded from /mydata/l3/build/gemv_int8_ps_x4.hw/gemv_int8_ps_x4.xclbin in 0.1 s
+[model] Qwen3 28 layers, 596.0 M linear weights, quantized in 4.3 s
+[smooth] alpha=0.5, calibrated on 193 tokens
+[fpga] 568.4 MiB INT8 weights resident in HBM (0.3 s)
+RESULT ppl backend=fpga smooth=0.5 tokens=203 ppl=19.008 time=802.0s gemvs=22939 mismatches=0

@@ -1,0 +1,5 @@
+M 40
+K 1344
+group 64
+seed 1
+kind rand

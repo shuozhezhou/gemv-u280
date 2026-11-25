@@ -1,0 +1,3 @@
+[model] Qwen3 28 layers, 596.0 M linear weights, quantized in 4.5 s
+[smooth] alpha=0.8, calibrated on 193 tokens
+RESULT ppl backend=golden smooth=0.8 tokens=203 ppl=19.738 time=377.0s gemvs=22939 mismatches=0

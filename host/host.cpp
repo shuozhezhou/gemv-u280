@@ -1,6 +1,12 @@
 // XRT host program for the GEMV kernels.
 //
-//   gemv_host <xclbin> <gemv_fp32|gemv_int8> <case_dir> [iters]
+//   gemv_host <xclbin> <gemv_fp32|gemv_int8|gemv_int8_ps|gemv_int8_fx|gemv_int4_ps>
+//             <case_dir> [iters]
+//
+// The three INT8 kernels have the same arguments; they differ only in the order
+// of the FP32 sum and so in the golden file (y_int8, y_int8ps, y_int8fx).
+// gemv_int4_ps has the same arguments too, with Wq4.i4.bin (two int4 weights per
+// byte) and s4.f32.bin in place of Wq.i8.bin and s.f32.bin; golden y_int4.
 //
 // 1. Loads the test case (data/FORMAT.md) and the xclbin.
 // 2. Allocates one buffer per kernel argument in the HBM bank the argument is
@@ -13,6 +19,7 @@
 //    order of operations) as the software version and CPU baseline.
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -60,6 +67,79 @@ static void cpu_int8(const std::vector<int8_t>& Wq, const std::vector<float>& s,
     }
 }
 
+// Same terms as cpu_int8, summed like gemv_int8_ps: 8 partial sums a[g % 8], then
+// the tree ((a0+a1)+(a2+a3))+((a4+a5)+(a6+a7)).
+static void cpu_int8_ps(const std::vector<int8_t>& Wq, const std::vector<float>& s,
+                        const std::vector<int8_t>& xq, float sx, std::vector<float>& y, int M,
+                        int K) {
+    const int G = K / 64;
+    for (int m = 0; m < M; m++) {
+        float a[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+        for (int g = 0; g < G; g++) {
+            int32_t P = 0;
+            for (int j = 0; j < 64; j++)
+                P += (int32_t)Wq[(size_t)m * K + g * 64 + j] * (int32_t)xq[g * 64 + j];
+            volatile float term = s[(size_t)m * G + g] * (float)P;
+            a[g % 8] = a[g % 8] + term;
+        }
+        volatile float l0 = a[0] + a[1], l1 = a[2] + a[3], l2 = a[4] + a[5], l3 = a[6] + a[7];
+        volatile float h0 = l0 + l1, h1 = l2 + l3;
+        float sum = h0 + h1;
+        y[m] = sx * sum;
+    }
+}
+
+// Same terms, summed like gemv_int8_fx: floor(term * 2^24) added exactly as integers.
+static void cpu_int8_fx(const std::vector<int8_t>& Wq, const std::vector<float>& s,
+                        const std::vector<int8_t>& xq, float sx, std::vector<float>& y, int M,
+                        int K) {
+    const int G = K / 64;
+    for (int m = 0; m < M; m++) {
+        long long acc = 0;
+        for (int g = 0; g < G; g++) {
+            int32_t P = 0;
+            for (int j = 0; j < 64; j++)
+                P += (int32_t)Wq[(size_t)m * K + g * 64 + j] * (int32_t)xq[g * 64 + j];
+            volatile float term = s[(size_t)m * G + g] * (float)P;
+            acc += (long long)std::floor((double)term * 16777216.0);  // exact
+        }
+        volatile float f = (float)acc * 5.9604644775390625e-08f;  // * 2^-24, exact
+        y[m] = sx * f;
+    }
+}
+
+// Same order as gemv_int4_ps: per 512-bit word j (groups 2j, 2j+1), w = t0 + t1,
+// 8 partial sums a[j % 8] over words, the same tree. Wq4 holds two int4 per byte
+// (weight 2b in the low nibble of byte b).
+static void cpu_int4_ps(const std::vector<int8_t>& Wq4, const std::vector<float>& s4,
+                        const std::vector<int8_t>& xq, float sx, std::vector<float>& y, int M,
+                        int K) {
+    const int G = K / 64, NW = K / 128;
+    auto w4 = [&](int m, int k) {
+        uint8_t b = (uint8_t)Wq4[((size_t)m * K + k) / 2];
+        int v = (k & 1) ? (b >> 4) : (b & 0xF);
+        return v > 7 ? v - 16 : v;
+    };
+    for (int m = 0; m < M; m++) {
+        float a[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+        for (int j = 0; j < NW; j++) {
+            volatile float t[2];
+            for (int h = 0; h < 2; h++) {
+                const int g = 2 * j + h;
+                int32_t P = 0;
+                for (int e = 0; e < 64; e++) P += w4(m, g * 64 + e) * (int32_t)xq[g * 64 + e];
+                t[h] = s4[(size_t)m * G + g] * (float)P;
+            }
+            volatile float w = t[0] + t[1];
+            a[j % 8] = a[j % 8] + w;
+        }
+        volatile float l0 = a[0] + a[1], l1 = a[2] + a[3], l2 = a[4] + a[5], l3 = a[6] + a[7];
+        volatile float h0 = l0 + l1, h1 = l2 + l3;
+        float sum = h0 + h1;
+        y[m] = sx * sum;
+    }
+}
+
 // ---------------------------------------------------------------- timing helper
 
 struct Timing {
@@ -83,12 +163,20 @@ static Timing time_runs(F run_once, int iters) {
 
 int main(int argc, char** argv) {
     if (argc < 4) {
-        std::printf("usage: %s <xclbin> <gemv_fp32|gemv_int8> <case_dir> [iters]\n", argv[0]);
+        std::printf("usage: %s <xclbin> <gemv_fp32|gemv_int8|gemv_int8_ps|gemv_int8_fx|gemv_int4_ps> "
+                    "<case_dir> [iters]\n",
+                    argv[0]);
         return 1;
     }
     const std::string xclbin = argv[1], kname = argv[2], dir = argv[3];
     const int iters = argc > 4 ? std::max(1, std::atoi(argv[4])) : 1;
-    const bool is_int8 = kname == "gemv_int8";
+    // INT8 variants: kernel name -> golden file suffix.
+    const std::string variant = kname == "gemv_int8"      ? "int8"
+                                : kname == "gemv_int8_ps" ? "int8ps"
+                                : kname == "gemv_int8_fx" ? "int8fx"
+                                : kname == "gemv_int4_ps" ? "int4"
+                                                          : "";
+    const bool is_int8 = !variant.empty();
     if (!is_int8 && kname != "gemv_fp32") {
         std::printf("unknown kernel %s\n", kname.c_str());
         return 1;
@@ -100,7 +188,7 @@ int main(int argc, char** argv) {
                 dir.c_str(), M, K, meta.kind.c_str(), meta.seed, kname.c_str(), iters);
 
     std::vector<float> golden =
-        read_bin<float>(dir + (is_int8 ? "/y_int8.f32.bin" : "/y_fp32.f32.bin"), M);
+        read_bin<float>(dir + "/y_" + (is_int8 ? variant : "fp32") + ".f32.bin", M);
     std::vector<float> y(M, 0.0f), y_cpu(M, 0.0f);
 
     // ---- device setup
@@ -141,12 +229,14 @@ int main(int argc, char** argv) {
         cpu_fp32(W, x, y_cpu, M, K);
         cpu_ms = ms_since(t0);
     } else {
-        std::vector<int8_t> Wq = read_bin<int8_t>(dir + "/Wq.i8.bin", (size_t)M * K);
-        std::vector<float> s = read_bin<float>(dir + "/s.f32.bin", (size_t)M * G);
+        const bool int4 = variant == "int4";
+        const size_t wbytes = int4 ? (size_t)M * K / 2 : (size_t)M * K;
+        std::vector<int8_t> Wq = read_bin<int8_t>(dir + (int4 ? "/Wq4.i4.bin" : "/Wq.i8.bin"), wbytes);
+        std::vector<float> s = read_bin<float>(dir + (int4 ? "/s4.f32.bin" : "/s.f32.bin"), (size_t)M * G);
         std::vector<int8_t> xq = read_bin<int8_t>(dir + "/xq.i8.bin", K);
         float sx = read_bin<float>(dir + "/sx.f32.bin", 1)[0];
 
-        xrt::bo bo_Wq(device, (size_t)M * K, krnl.group_id(0));
+        xrt::bo bo_Wq(device, wbytes, krnl.group_id(0));
         xrt::bo bo_s(device, (size_t)M * G * sizeof(float), krnl.group_id(1));
         xrt::bo bo_xq(device, (size_t)K, krnl.group_id(2));
         xrt::bo bo_y(device, (size_t)M * sizeof(float), krnl.group_id(4));
@@ -167,9 +257,16 @@ int main(int argc, char** argv) {
         bo_y.read(y.data());
         d2h_ms = ms_since(t0);
 
-        bytes_read = (double)M * K + (double)M * G * 4 + K;
+        bytes_read = (double)wbytes + (double)M * G * 4 + K;
         t0 = Clock::now();
-        cpu_int8(Wq, s, xq, sx, y_cpu, M, K);
+        if (int4)
+            cpu_int4_ps(Wq, s, xq, sx, y_cpu, M, K);
+        else if (variant == "int8ps")
+            cpu_int8_ps(Wq, s, xq, sx, y_cpu, M, K);
+        else if (variant == "int8fx")
+            cpu_int8_fx(Wq, s, xq, sx, y_cpu, M, K);
+        else
+            cpu_int8(Wq, s, xq, sx, y_cpu, M, K);
         cpu_ms = ms_since(t0);
     }
 

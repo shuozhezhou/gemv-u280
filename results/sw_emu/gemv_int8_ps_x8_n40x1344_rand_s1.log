@@ -1,0 +1,85 @@
+case data/n40x1344_rand_s1: M=40 K=1344 kind=rand seed=1, kernel gemv_int8_ps x 8 CU(s), 1 timed run(s)
+device: xilinx_u280_gen3x16_xdma_1_202211_1, xclbin loaded in 46.9 ms
+CU 1: rows 0..4, banks Wq 0, s 0, xq 0, y 0
+CU 2: rows 5..9, banks Wq 0, s 0, xq 0, y 0
+CU 3: rows 10..14, banks Wq 0, s 0, xq 0, y 0
+CU 4: rows 15..19, banks Wq 0, s 0, xq 0, y 0
+CU 5: rows 20..24, banks Wq 0, s 0, xq 0, y 0
+CU 6: rows 25..29, banks Wq 0, s 0, xq 0, y 0
+CU 7: rows 30..34, banks Wq 0, s 0, xq 0, y 0
+CU 8: rows 35..39, banks Wq 0, s 0, xq 0, y 0
+Kernel Name: gemv_int8_ps_1, CU Number: 0, Thread creation status: success
+Kernel Name: gemv_int8_ps_2, CU Number: 1, Thread creation status: success
+Kernel Name: gemv_int8_ps_3, CU Number: 2, Thread creation status: success
+Kernel Name: gemv_int8_ps_4, CU Number: 3, Thread creation status: success
+Kernel Name: gemv_int8_ps_5, CU Number: 4, Thread creation status: success
+Kernel Name: gemv_int8_ps_6, CU Number: 5, Thread creation status: success
+Kernel Name: gemv_int8_ps_7, CU Number: 6, Thread creation status: success
+Kernel Name: gemv_int8_ps_8, CU Number: 7, Thread creation status: success
+Kernel Name: gemv_int8_ps_1, CU Number: 0, State: Start
+Kernel Name: gemv_int8_ps_2, CU Number: 1, State: Start
+Kernel Name: gemv_int8_ps_3, CU Number: 2, State: Start
+Kernel Name: gemv_int8_ps_3, CU Number: 2, State: Running
+Kernel Name: gemv_int8_ps_1, CU Number: 0, State: Running
+Kernel Name: gemv_int8_ps_2, CU Number: 1, State: Running
+Kernel Name: gemv_int8_ps_4, CU Number: 3, State: Start
+Kernel Name: gemv_int8_ps_4, CU Number: 3, State: Running
+Kernel Name: gemv_int8_ps_5, CU Number: 4, State: Start
+Kernel Name: gemv_int8_ps_6, CU Number: 5, State: Start
+Kernel Name: gemv_int8_ps_6, CU Number: 5, State: Running
+Kernel Name: gemv_int8_ps_7, CU Number: 6, State: Start
+Kernel Name: gemv_int8_ps_7, CU Number: 6, State: Running
+Kernel Name: gemv_int8_ps_5, CU Number: 4, State: Running
+Kernel Name: gemv_int8_ps_8, CU Number: 7, State: Start
+Kernel Name: gemv_int8_ps_3, CU Number: 2, State: Idle
+Kernel Name: gemv_int8_ps_8, CU Number: 7, State: Running
+Kernel Name: gemv_int8_ps_4, CU Number: 3, State: Idle
+Kernel Name: gemv_int8_ps_2, CU Number: 1, State: Idle
+Kernel Name: gemv_int8_ps_1, CU Number: 0, State: Idle
+Kernel Name: gemv_int8_ps_7, CU Number: 6, State: Idle
+Kernel Name: gemv_int8_ps_6, CU Number: 5, State: Idle
+Kernel Name: gemv_int8_ps_5, CU Number: 4, State: Idle
+Kernel Name: gemv_int8_ps_8, CU Number: 7, State: Idle
+Kernel Name: gemv_int8_ps_1, CU Number: 0, State: Start
+Kernel Name: gemv_int8_ps_2, CU Number: 1, State: Start
+Kernel Name: gemv_int8_ps_2, CU Number: 1, State: Running
+Kernel Name: gemv_int8_ps_3, CU Number: 2, State: Start
+Kernel Name: gemv_int8_ps_3, CU Number: 2, State: Running
+Kernel Name: gemv_int8_ps_4, CU Number: 3, State: Start
+Kernel Name: gemv_int8_ps_4, CU Number: 3, State: Running
+Kernel Name: gemv_int8_ps_1, CU Number: 0, State: Running
+Kernel Name: gemv_int8_ps_5, CU Number: 4, State: Start
+Kernel Name: gemv_int8_ps_6, CU Number: 5, State: Start
+Kernel Name: gemv_int8_ps_6, CU Number: 5, State: Running
+Kernel Name: gemv_int8_ps_7, CU Number: 6, State: Start
+Kernel Name: gemv_int8_ps_7, CU Number: 6, State: Running
+Kernel Name: gemv_int8_ps_8, CU Number: 7, State: Start
+Kernel Name: gemv_int8_ps_5, CU Number: 4, State: Running
+Kernel Name: gemv_int8_ps_8, CU Number: 7, State: Running
+Kernel Name: gemv_int8_ps_4, CU Number: 3, State: Idle
+Kernel Name: gemv_int8_ps_3, CU Number: 2, State: Idle
+Kernel Name: gemv_int8_ps_1, CU Number: 0, State: Idle
+Kernel Name: gemv_int8_ps_2, CU Number: 1, State: Idle
+Kernel Name: gemv_int8_ps_7, CU Number: 6, State: Idle
+Kernel Name: gemv_int8_ps_6, CU Number: 5, State: Idle
+Kernel Name: gemv_int8_ps_5, CU Number: 4, State: Idle
+Kernel Name: gemv_int8_ps_8, CU Number: 7, State: Idle
+device process sw_emu_device done
+Kernel Name: gemv_int8_ps_1, CU Number: 0, Status: Shutdown
+Kernel Name: gemv_int8_ps_2, CU Number: 1, Status: Shutdown
+Kernel Name: gemv_int8_ps_3, CU Number: 2, Status: Shutdown
+Kernel Name: gemv_int8_ps_4, CU Number: 3, Status: Shutdown
+Kernel Name: gemv_int8_ps_5, CU Number: 4, Status: Shutdown
+Kernel Name: gemv_int8_ps_6, CU Number: 5, Status: Shutdown
+Kernel Name: gemv_int8_ps_7, CU Number: 6, Status: Shutdown
+Kernel Name: gemv_int8_ps_8, CU Number: 7, Status: Shutdown
+INFO [HLS SIM]: The maximum depth reached by any hls::stream() instance in the design is 105
+
+kernel time   avg 71.768 ms  min 71.768 ms  max 71.768 ms  (1 runs, 8 CUs)
+bytes read    0.1 MiB
+bandwidth     0.00 GB/s aggregate (bytes read / avg time), 0.00 GB/s per CU
+PCIe          host->device 3.15 ms
+
+FPGA vs golden:
+  40 values: 40 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

@@ -1,0 +1,2 @@
+[model] 12 layers, 123.5 M linear weights, quantized in 1.2 s
+RESULT ppl backend=fp32 tokens=204 ppl=13.507 time=44.6s gemvs=9996 mismatches=0

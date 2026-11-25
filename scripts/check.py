@@ -3,6 +3,7 @@
 
     python3 scripts/check.py data/n64_rand_s1 y_out.f32.bin --kernel fp32
     python3 scripts/check.py data/n64_rand_s1 y_out.f32.bin --kernel int8   # bit-exact
+    python3 scripts/check.py data/n64_rand_s1 y_out.f32.bin --kernel int8ps # gemv_int8_ps
     python3 scripts/check.py --verify-checksums                            # data/CHECKSUMS.md5
 
 Same rule as common/binio.h: tol = 0 means bit-exact, otherwise
@@ -64,9 +65,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("case", nargs="?")
     ap.add_argument("output", nargs="?")
-    ap.add_argument("--kernel", choices=["fp32", "int8"], default="fp32")
+    ap.add_argument("--kernel", choices=["fp32", "int8", "int8ps", "int8fx", "int4"], default="fp32")
     ap.add_argument("--tol", type=float, default=None,
-                    help="default: 0 (bit-exact) for int8, 1e-6 for fp32")
+                    help="default: 0 (bit-exact) for int8*/int4, 1e-6 for fp32")
     ap.add_argument("--verify-checksums", action="store_true")
     args = ap.parse_args()
 
@@ -81,7 +82,7 @@ def main():
     if out.size != M:
         print(f"output has {out.size} values, expected {M}")
         sys.exit(1)
-    tol = args.tol if args.tol is not None else (0.0 if args.kernel == "int8" else 1e-6)
+    tol = args.tol if args.tol is not None else (0.0 if args.kernel != "fp32" else 1e-6)
     bad = compare(out, golden, tol)
     print("TEST PASSED" if bad == 0 else "TEST FAILED")
     sys.exit(0 if bad == 0 else 1)

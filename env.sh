@@ -24,5 +24,14 @@ else
     echo "env.sh: XRT not found at /opt/xilinx/xrt" >&2
 fi
 
+# Ubuntu 22.04 + Vitis 2023.1: the gcc that v++ runs for sw_emu does not search the
+# multiarch directories ("fatal error: bits/wordsize.h: No such file or directory").
+if [ -f /usr/include/x86_64-linux-gnu/bits/wordsize.h ]; then
+    case ":${CPATH:-}:" in *:/usr/include/x86_64-linux-gnu:*) ;; *)
+        export CPATH=/usr/include/x86_64-linux-gnu${CPATH:+:$CPATH}
+        export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu${LIBRARY_PATH:+:$LIBRARY_PATH} ;;
+    esac
+fi
+
 export PLATFORM=${PLATFORM:-xilinx_u280_gen3x16_xdma_1_202211_1}
 echo "Vitis: $(command -v v++)   XRT: ${XILINX_XRT:-missing}   platform: $PLATFORM"

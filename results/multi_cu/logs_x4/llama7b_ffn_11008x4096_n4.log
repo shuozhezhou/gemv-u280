@@ -1,0 +1,15 @@
+case data/llama7b_ffn_11008x4096: M=11008 K=4096 kind=rand seed=1, kernel gemv_int8_ps x 4 CU(s), 1000 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 58.9 ms
+CU 1: rows 0..2751, banks Wq 0, s 1, xq 1, y 1
+CU 2: rows 2752..5503, banks Wq 65538, s 65539, xq 65539, y 65539
+CU 3: rows 5504..8255, banks Wq 131076, s 131077, xq 131077, y 131077
+CU 4: rows 8256..11007, banks Wq 196614, s 196615, xq 196615, y 196615
+
+kernel time   avg 1.728 ms  min 1.715 ms  max 1.752 ms  (1000 runs, 4 CUs)
+bytes read    45.7 MiB
+bandwidth     27.73 GB/s aggregate (bytes read / avg time), 6.93 GB/s per CU
+PCIe          host->device 12.52 ms
+
+FPGA vs golden:
+  11008 values: 11008 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

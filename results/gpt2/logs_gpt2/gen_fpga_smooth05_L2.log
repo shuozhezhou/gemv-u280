@@ -1,0 +1,6 @@
+[fpga] gemv_int8 loaded from /mydata/sweep/build/gemv_int8.hw/gemv_int8.xclbin in 0.1 s
+[model] 12 layers, 123.5 M linear weights, quantized in 1.2 s
+[smooth] alpha=0.5, calibrated on 194 tokens
+[fpga] 117.8 MiB INT8 weights resident in HBM (0.1 s)
+TEXT >>> Field-programmable gate arrays are a common feature of the Raspberry Pi. The Raspberry Pi is a small, compact, and inexpensive computer that can be used to program a wide range of applications.\n\nThe Raspberry Pi is a small, compact, and inexpensive computer that can be used to program a wide range of applications. The Raspberry Pi is a small
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=64 steps=70 wall=36.91s (1.90 steps/s) gemvs=3430 fpga_kernel_time=6.50s (92.8 ms/token, 3430 calls) bit_exact_mismatches=0/3430

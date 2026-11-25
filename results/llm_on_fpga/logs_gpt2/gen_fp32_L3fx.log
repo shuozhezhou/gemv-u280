@@ -1,0 +1,3 @@
+[model] 12 layers, 123.5 M linear weights, quantized in 1.2 s
+TEXT >>> Field-programmable gate arrays are used to control the power supply and the power supply voltage. The power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled by the voltage regulator.\n\nThe power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled
+RESULT gen backend=fp32 smooth=None prompt_tokens=7 new_tokens=64 steps=70 wall=15.11s (4.63 steps/s) gemvs=3430

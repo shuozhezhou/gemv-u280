@@ -1,0 +1,4 @@
+[fpga] gemv_int8_fx x1 loaded from /mydata/l3/build/gemv_int8_fx.hw/gemv_int8_fx.xclbin in 5.1 s
+[model] 12 layers, 123.5 M linear weights, quantized in 1.2 s
+[fpga] 117.8 MiB INT8 weights resident in HBM (0.1 s)
+RESULT ppl backend=fpga smooth=None tokens=204 ppl=64.667 time=161.1s gemvs=9996 mismatches=0

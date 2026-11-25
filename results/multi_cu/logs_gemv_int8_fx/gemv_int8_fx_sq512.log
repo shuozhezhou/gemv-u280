@@ -1,0 +1,14 @@
+case data/sq512: M=512 K=512 kind=rand seed=1, kernel gemv_int8_fx, 2000 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 94.3 ms
+
+kernel time   avg 0.050 ms  min 0.045 ms  max 0.071 ms  (2000 runs)
+bytes read    0.3 MiB
+bandwidth     5.59 GB/s (bytes read / avg kernel time)
+PCIe          host->device 0.08 ms, device->host 0.012 ms
+CPU (1 thread, same op order) 0.185 ms
+
+FPGA vs golden:
+  512 values: 512 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+CPU  vs golden:
+  512 values: 512 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

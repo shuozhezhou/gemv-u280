@@ -1,0 +1,11 @@
+RESULT ppl backend=fpga smooth=None tokens=204 ppl=66.058 time=109.3s gemvs=9996 mismatches=0
+RESULT ppl backend=fpga smooth=0.5 tokens=204 ppl=13.436 time=109.0s gemvs=9996 mismatches=0
+TEXT >>> Field-programmable gate arrays are a common feature of the Raspberry Pi. The Raspberry Pi is a small, compact, and inexpensive computer that can be used to program a wide range of applications.\n\nThe Raspberry Pi is a small, compact, and inexpensive computer that can be used to program a wide range of applications. The Raspberry Pi is a small
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=64 steps=70 wall=36.91s (1.90 steps/s) gemvs=3430 fpga_kernel_time=6.50s (92.8 ms/token, 3430 calls) bit_exact_mismatches=0/3430
+TEXT >>> Field-programmable gate arrays are a common feature of the Raspberry Pi. The Raspberry Pi is a small, compact, and inexpensive computer that can be used to program a wide range of applications.\n\nThe Raspberry Pi is a small, compact, and inexpensive computer that can be used to program a wide range of applications. The Raspberry Pi is a small
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=64 steps=70 wall=8.18s (8.56 steps/s) gemvs=3430 fpga_kernel_time=6.57s (93.8 ms/token, 3430 calls)
+TEXT >>> Field-programmable gate arrays are the "troubleshooting and, in the other, the the-troubleshooting, the-troubleshooting, the-troubleshooting, the-trourdays-in-courier-in-courier-s-a-f-1-1-1
+RESULT gen backend=fpga smooth=None prompt_tokens=7 new_tokens=64 steps=70 wall=36.85s (1.90 steps/s) gemvs=3430 fpga_kernel_time=6.50s (92.9 ms/token, 3430 calls) bit_exact_mismatches=0/3430
+TEXT >>> Field-programmable gate arrays are used to control the power supply and the power supply voltage. The power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled by the voltage regulator.\n\nThe power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled
+RESULT gen backend=fp32 smooth=None prompt_tokens=7 new_tokens=64 steps=70 wall=15.07s (4.64 steps/s) gemvs=3430
+GPT2 DONE L2

@@ -1,0 +1,5 @@
+[fpga] gemv_int8_ps x4 loaded from /mydata/l3/build/gemv_int8_ps_x4.hw/gemv_int8_ps_x4.xclbin in 0.1 s
+[model] Qwen3 28 layers, 596.0 M linear weights, quantized in 4.3 s
+[fpga] 568.4 MiB INT8 weights resident in HBM (0.3 s)
+TEXT >>> The capital of France is Paris, and the capital of the United States is Washington, D.C. The capital of the United Kingdom is London. The capital of the Netherlands is Amsterdam. The capital of the United Arab Emirates is Abu Dhabi. The capital of the United States is Washington, D.C. The capital of the Netherlands is Amsterdam. The
+RESULT gen backend=fpga smooth=None prompt_tokens=5 new_tokens=64 steps=68 wall=6.20s (10.97 steps/s) gemvs=7684 fpga_kernel_time=2.52s (37.1 ms/token, 7684 calls, 16.08 GB/s of weights incl. call overhead)

@@ -1,0 +1,6 @@
+[fpga] gemv_int8_ps_b (batch <= 8) loaded from /mydata/l3/build/gemv_int8_ps_b.hw/gemv_int8_ps_b.xclbin in 0.1 s
+[model] 12 layers, 123.5 M linear weights, quantized in 1.2 s
+[smooth] alpha=0.5, calibrated on 194 tokens
+[fpga] 117.8 MiB INT8 weights resident in HBM (0.1 s)
+TEXT >>> Field-programmable gate arrays are used to store and retrieve data from a computer. The data is then sent to a computer and stored in a memory.\n\nThe computer then sends the data to a computer that is connected to the Internet. The computer then sends the data to a computer that is connected to the Internet.\n\nThe computer then sends the data to a computer that is connected to the Internet.\n\nThe computer then sends the data to a computer that is connected to the Internet.\n\nThe computer then sends the data to a computer that is connected to the Internet.\n\nThe computer then sends the data to a computer that is connected to the
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=128 steps=134 wall=5.62s (23.83 steps/s) gemvs=7056 fpga_kernel_time=2.23s (16.7 ms/token, 3283 calls, 3.71 GB/s of weights incl. call overhead) weight_passes=3283 nb_hist=[0, 2058, 0, 0, 1176, 0, 49, 0, 0] spec_k=3 ngram=2..3 verify_passes=66 drafts=72 accepted=62 tokens_per_pass=1.94 identical_to_ref=True new_tok_per_s=22.76

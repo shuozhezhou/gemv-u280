@@ -1,0 +1,4 @@
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=5 new_tokens=64 steps=68 wall=5.96s (11.40 steps/s) gemvs=7684 fpga_kernel_time=2.13s (31.3 ms/token, 7684 calls, 19.04 GB/s of weights incl. call overhead)
+bit_exact_mismatches=0/1356
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=64 steps=70 wall=2.65s (26.41 steps/s) gemvs=3430 fpga_kernel_time=1.06s (15.1 ms/token, 3430 calls, 8.18 GB/s of weights incl. call overhead)
+bit_exact_mismatches=0/686

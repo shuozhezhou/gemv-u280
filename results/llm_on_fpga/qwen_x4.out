@@ -1,0 +1,9 @@
+RESULT ppl backend=fpga smooth=None tokens=203 ppl=20.070 time=19.5s gemvs=22939 mismatches=0
+RESULT ppl backend=fpga smooth=0.5 tokens=203 ppl=19.008 time=802.0s gemvs=22939 mismatches=0
+TEXT >>> The capital of France is Paris. The capital of the United States is Washington, D.C. The capital of the United Kingdom is London. The capital of the United Arab Emirates is Abu Dhabi. The capital of the United States is Washington, D.C. The capital of the United Kingdom is London. The capital of the United Arab Emirates is Abu
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=5 new_tokens=64 steps=68 wall=6.15s (11.05 steps/s) gemvs=7684 fpga_kernel_time=2.50s (36.8 ms/token, 7684 calls, 16.19 GB/s of weights incl. call overhead)
+TEXT >>> The capital of France is Paris, and the capital of the United States is Washington, D.C. The capital of the United Kingdom is London. The capital of the Netherlands is Amsterdam. The capital of the United Arab Emirates is Abu Dhabi. The capital of the United States is Washington, D.C. The capital of the Netherlands is Amsterdam. The
+RESULT gen backend=fpga smooth=None prompt_tokens=5 new_tokens=64 steps=68 wall=6.20s (10.97 steps/s) gemvs=7684 fpga_kernel_time=2.52s (37.1 ms/token, 7684 calls, 16.08 GB/s of weights incl. call overhead)
+TEXT >>> The capital of France is Paris. The capital of Italy is Rome. The capital of Spain is Madrid. The capital of China is Beijing. The capital of Japan is Tokyo. The capital of India is New Delhi. The capital of Brazil is Brasilia. The capital of Egypt is Cairo. The capital of South Africa is Cape Town. The capital
+RESULT gen backend=fp32 smooth=None prompt_tokens=5 new_tokens=64 steps=68 wall=47.97s (1.42 steps/s) gemvs=7684
+LLM DONE qwen06_x4

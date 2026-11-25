@@ -1,0 +1,6 @@
+[fpga] gemv_int8_ps_bw (batch <= 8) loaded from /mydata/l3/build/gemv_int8_ps_bw_wide.hw/gemv_int8_ps_bw_wide.xclbin in 0.1 s
+[model] Qwen3 28 layers, 596.0 M linear weights, quantized in 4.3 s
+[smooth] alpha=0.5, calibrated on 193 tokens
+[fpga] 568.4 MiB INT8 weights resident in HBM (0.3 s)
+TEXT >>> def add(a, b):\n    return a + b\n\ndef sub(a, b):\n    return a - b\n\ndef mul(a, b):\n    return a * b\n\ndef div(a, b):\n    return a / b\n\ndef main():\n    a = int(input("Enter first number: "))\n    b = int(input("Enter second number: "))\n    print(add(a, b))\n    print(sub(a, b))\n    print(mul(a,
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=30 new_tokens=64 steps=93 wall=8.75s (10.63 steps/s) gemvs=12430 fpga_kernel_time=2.93s (31.5 ms/token, 5876 calls, 10.59 GB/s of weights incl. call overhead) weight_passes=5876 nb_hist=[0, 4181, 0, 0, 1243, 113, 0, 0, 339] spec_k=3 ngram=2..3 verify_passes=48 drafts=33 accepted=16 tokens_per_pass=1.33 identical_to_ref=True new_tok_per_s=7.32 decode_wall=7.90s decode_tok_per_s=8.11 decode_kernel=2.711s (42.37 ms/token) decode_passes=5424 (84.75 per token)

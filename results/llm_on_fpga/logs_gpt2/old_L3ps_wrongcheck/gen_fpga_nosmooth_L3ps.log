@@ -1,0 +1,5 @@
+[fpga] gemv_int8_ps loaded from /mydata/l3/build/gemv_int8_ps.hw/gemv_int8_ps.xclbin in 0.1 s
+[model] 12 layers, 123.5 M linear weights, quantized in 1.2 s
+[fpga] 117.8 MiB INT8 weights resident in HBM (0.1 s)
+TEXT >>> Field-programmable gate arrays are the "troubleshooting and, in the other, the the-troubleshooting.\n"The "troubleshooting" in the "troubleshooting" in the "troubleshooting" in the "trou-trou-trou-trou-trou-t
+RESULT gen backend=fpga smooth=None prompt_tokens=7 new_tokens=64 steps=70 wall=32.02s (2.19 steps/s) gemvs=3430 fpga_kernel_time=0.93s (13.3 ms/token, 3430 calls) bit_exact_mismatches=3430/3430

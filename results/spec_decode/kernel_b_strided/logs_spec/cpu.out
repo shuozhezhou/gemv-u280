@@ -1,0 +1,5 @@
+RESULT gen backend=golden smooth=0.5 prompt_tokens=7 new_tokens=48 steps=54 wall=41.00s (1.32 steps/s) gemvs=2646 new_tok_per_s=1.17
+RESULT gen backend=golden smooth=0.5 prompt_tokens=7 new_tokens=48 steps=54 wall=115.26s (0.47 steps/s) gemvs=7399 spec_k=7 ngram=3 verify_passes=43 drafts=102 accepted=5 tokens_per_pass=1.12 identical_to_ref=True new_tok_per_s=0.42
+RESULT ppl backend=golden smooth=0.5 tokens=64 ppl=14.133 time=48.1s gemvs=3136 mismatches=0
+RESULT ppl backend=golden smooth=0.5 tokens=64 ppl=14.133 time=47.5s gemvs=3136 mismatches=0
+CPU SPEC DONE

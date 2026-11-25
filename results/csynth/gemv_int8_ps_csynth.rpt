@@ -1,0 +1,382 @@
+
+
+================================================================
+== Synthesis Summary Report of 'gemv_int8_ps'
+================================================================
++ General Information: 
+    * Date:           Tue Nov 24 21:21:37 2026
+    * Version:        2023.1 (Build 3854077 on May  4 2023)
+    * Project:        hls_gemv_int8_ps
+    * Solution:       sol (Vitis Kernel Flow Target)
+    * Product family: virtexuplusHBM
+    * Target device:  xcu280-fsvh2892-2L-e
+    
+
++ Performance & Resource Estimates: 
+    
+    PS: '+' for module; 'o' for loop; '*' for dataflow
+    +-----------------------------------+--------+-------+---------+-----------+----------+---------+--------+----------+---------+----------+-------------+------------+-----+
+    |              Modules              |  Issue |       | Latency |  Latency  | Iteration|         |  Trip  |          |         |          |             |            |     |
+    |              & Loops              |  Type  | Slack | (cycles)|    (ns)   |  Latency | Interval|  Count | Pipelined|  BRAM   |    DSP   |      FF     |     LUT    | URAM|
+    +-----------------------------------+--------+-------+---------+-----------+----------+---------+--------+----------+---------+----------+-------------+------------+-----+
+    |+ gemv_int8_ps*                    |  Timing|  -0.24|   262313|  8.735e+05|         -|   262314|       -|  dataflow|  72 (1%)|  51 (~0%)|  17537 (~0%)|  16092 (1%)|    -|
+    | + entry_proc                      |       -|   1.22|        0|      0.000|         -|        0|       -|        no|        -|         -|      3 (~0%)|    38 (~0%)|    -|
+    | + compute_terms                   |  Timing|  -0.00|   262313|  8.735e+05|         -|   262313|       -|        no|  8 (~0%)|  42 (~0%)|   5961 (~0%)|  4802 (~0%)|    -|
+    |  + compute_terms_Pipeline_load_x  |  Timing|  -0.00|       67|    223.110|         -|       67|       -|        no|        -|         -|    596 (~0%)|   118 (~0%)|    -|
+    |   o load_x                        |       -|   2.43|       65|    216.450|         3|        1|      64|       yes|        -|         -|            -|           -|    -|
+    |  + compute_terms_Pipeline_words   |  Timing|  -0.00|   262168|  8.730e+05|         -|   262168|       -|        no|        -|  40 (~0%)|   4739 (~0%)|  3485 (~0%)|    -|
+    |   o words                         |       -|   2.43|   262166|  8.730e+05|        24|        1|  262144|       yes|        -|         -|            -|           -|    -|
+    | + accumulate                      |  Timing|  -0.14|   262160|  8.730e+05|         -|   262160|       -|        no|        -|   4 (~0%)|   1232 (~0%)|  2057 (~0%)|    -|
+    |  + accumulate_Pipeline_chunks     |  Timing|  -0.14|   262155|  8.730e+05|         -|   262155|       -|        no|        -|   2 (~0%)|    863 (~0%)|  1653 (~0%)|    -|
+    |   o chunks                        |       -|   2.43|   262153|  8.730e+05|        18|        8|   32768|       yes|        -|         -|            -|           -|    -|
+    | + reduce_store                    |  Timing|  -0.24|    32877|  1.095e+05|         -|    32877|       -|        no|        -|   5 (~0%)|   1126 (~0%)|  1243 (~0%)|    -|
+    |  + reduce_store_Pipeline_rows     |  Timing|  -0.24|    32806|  1.092e+05|         -|    32806|       -|        no|        -|   5 (~0%)|    895 (~0%)|   631 (~0%)|    -|
+    |   o rows                          |       -|   2.43|    32804|  1.092e+05|        38|        8|    4096|       yes|        -|         -|            -|           -|    -|
+    +-----------------------------------+--------+-------+---------+-----------+----------+---------+--------+----------+---------+----------+-------------+------------+-----+
+
+
+================================================================
+== HW Interfaces
+================================================================
+* M_AXI
++-------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+| Interface   | Data Width | Address Width | Latency | Offset | Register | Max Widen | Max Read     | Max Write    | Num Read    | Num Write   | Resource Estimate |
+|             | (SW->HW)   |               |         |        |          | Bitwidth  | Burst Length | Burst Length | Outstanding | Outstanding |                   |
++-------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+| m_axi_gmem0 | 512 -> 512 | 64            | 64      | slave  | 0        | 512       | 64           | 16           | 16          | 16          | BRAM=30           |
+| m_axi_gmem1 | 32 -> 32   | 64            | 64      | slave  | 0        | 512       | 64           | 16           | 16          | 16          | BRAM=2            |
+| m_axi_gmem2 | 512 -> 512 | 64            | 64      | slave  | 0        | 512       | 16           | 16           | 16          | 16          | BRAM=30           |
+| m_axi_gmem3 | 32 -> 32   | 64            | 64      | slave  | 0        | 512       | 16           | 16           | 16          | 16          | BRAM=2            |
++-------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+
+* S_AXILITE Interfaces
++---------------+------------+---------------+--------+----------+
+| Interface     | Data Width | Address Width | Offset | Register |
++---------------+------------+---------------+--------+----------+
+| s_axi_control | 32         | 7             | 16     | 0        |
++---------------+------------+---------------+--------+----------+
+
+* S_AXILITE Registers
++---------------+----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+| Interface     | Register | Offset | Width | Access | Description                      | Bit Fields                                                                         |
++---------------+----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+| s_axi_control | CTRL     | 0x00   | 32    | RW     | Control signals                  | 0=AP_START 1=AP_DONE 2=AP_IDLE 3=AP_READY 4=AP_CONTINUE 7=AUTO_RESTART 9=INTERRUPT |
+| s_axi_control | GIER     | 0x04   | 32    | RW     | Global Interrupt Enable Register | 0=Enable                                                                           |
+| s_axi_control | IP_IER   | 0x08   | 32    | RW     | IP Interrupt Enable Register     | 0=CHAN0_INT_EN 1=CHAN1_INT_EN                                                      |
+| s_axi_control | IP_ISR   | 0x0c   | 32    | RW     | IP Interrupt Status Register     | 0=CHAN0_INT_ST 1=CHAN1_INT_ST                                                      |
+| s_axi_control | Wq_1     | 0x10   | 32    | W      | Data signal of Wq                |                                                                                    |
+| s_axi_control | Wq_2     | 0x14   | 32    | W      | Data signal of Wq                |                                                                                    |
+| s_axi_control | s_1      | 0x1c   | 32    | W      | Data signal of s                 |                                                                                    |
+| s_axi_control | s_2      | 0x20   | 32    | W      | Data signal of s                 |                                                                                    |
+| s_axi_control | xq_1     | 0x28   | 32    | W      | Data signal of xq                |                                                                                    |
+| s_axi_control | xq_2     | 0x2c   | 32    | W      | Data signal of xq                |                                                                                    |
+| s_axi_control | sx       | 0x34   | 32    | W      | Data signal of sx                |                                                                                    |
+| s_axi_control | y_1      | 0x3c   | 32    | W      | Data signal of y                 |                                                                                    |
+| s_axi_control | y_2      | 0x40   | 32    | W      | Data signal of y                 |                                                                                    |
+| s_axi_control | M        | 0x48   | 32    | W      | Data signal of M                 |                                                                                    |
+| s_axi_control | K        | 0x50   | 32    | W      | Data signal of K                 |                                                                                    |
++---------------+----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+
+* TOP LEVEL CONTROL
++-----------+---------------+-----------+
+| Interface | Type          | Ports     |
++-----------+---------------+-----------+
+| ap_clk    | clock         | ap_clk    |
+| ap_rst_n  | reset         | ap_rst_n  |
+| interrupt | interrupt     | interrupt |
+| ap_ctrl   | ap_ctrl_chain |           |
++-----------+---------------+-----------+
+
+
+================================================================
+== SW I/O Information
+================================================================
+* Top Function Arguments
++----------+-----------+----------------------+
+| Argument | Direction | Datatype             |
++----------+-----------+----------------------+
+| Wq       | in        | ap_uint<512> const * |
+| s        | in        | float const *        |
+| xq       | in        | ap_uint<512> const * |
+| sx       | in        | float                |
+| y        | out       | float*               |
+| M        | in        | int                  |
+| K        | in        | int                  |
++----------+-----------+----------------------+
+
+* SW-to-HW Mapping
++----------+---------------+-----------+----------+--------------------------------+
+| Argument | HW Interface  | HW Type   | HW Usage | HW Info                        |
++----------+---------------+-----------+----------+--------------------------------+
+| Wq       | m_axi_gmem0   | interface |          |                                |
+| Wq       | s_axi_control | register  | offset   | name=Wq_1 offset=0x10 range=32 |
+| Wq       | s_axi_control | register  | offset   | name=Wq_2 offset=0x14 range=32 |
+| s        | m_axi_gmem1   | interface |          |                                |
+| s        | s_axi_control | register  | offset   | name=s_1 offset=0x1c range=32  |
+| s        | s_axi_control | register  | offset   | name=s_2 offset=0x20 range=32  |
+| xq       | m_axi_gmem2   | interface |          |                                |
+| xq       | s_axi_control | register  | offset   | name=xq_1 offset=0x28 range=32 |
+| xq       | s_axi_control | register  | offset   | name=xq_2 offset=0x2c range=32 |
+| sx       | s_axi_control | register  |          | name=sx offset=0x34 range=32   |
+| y        | m_axi_gmem3   | interface |          |                                |
+| y        | s_axi_control | register  | offset   | name=y_1 offset=0x3c range=32  |
+| y        | s_axi_control | register  | offset   | name=y_2 offset=0x40 range=32  |
+| M        | s_axi_control | register  |          | name=M offset=0x48 range=32    |
+| K        | s_axi_control | register  |          | name=K offset=0x50 range=32    |
++----------+---------------+-----------+----------+--------------------------------+
+
+
+================================================================
+== M_AXI Burst Information
+================================================================
+ Note: All burst requests might be further partitioned into multiple requests during RTL generation based on max_read_burst_length or max_write_burst_length settings.
+
+* Inferred Burst Summary
++--------------+-----------+----------+-------+--------+--------------------------------------------------+
+| HW Interface | Direction | Length   | Width | Loop   | Loop Location                                    |
++--------------+-----------+----------+-------+--------+--------------------------------------------------+
+| m_axi_gmem0  | read      | variable | 512   | words  | /users/shuozhez/l3/kernels/int8_terms.h:40:5     |
+| m_axi_gmem1  | read      | variable | 32    | words  | /users/shuozhez/l3/kernels/int8_terms.h:40:5     |
+| m_axi_gmem2  | read      | variable | 512   | load_x | /users/shuozhez/l3/kernels/int8_terms.h:32:5     |
+| m_axi_gmem3  | write     | variable | 32    | rows   | /users/shuozhez/l3/kernels/gemv_int8_ps.cpp:68:5 |
++--------------+-----------+----------+-------+--------+--------------------------------------------------+
+
+* All M_AXI Variable Accesses
++--------------+----------+---------------------------------------------------+-----------+--------------+----------+--------+--------------------------------------------------+------------+----------------------------------------------------------------------------------------------------------+
+| HW Interface | Variable | Access Location                                   | Direction | Burst Status | Length   | Loop   | Loop Location                                    | Resolution | Problem                                                                                                  |
++--------------+----------+---------------------------------------------------+-----------+--------------+----------+--------+--------------------------------------------------+------------+----------------------------------------------------------------------------------------------------------+
+| m_axi_gmem0  | Wq       | /users/shuozhez/l3/kernels/int8_terms.h:40:5      | read      | Widen Fail   |          | words  | /users/shuozhez/l3/kernels/int8_terms.h:40:5     | 214-353    | Could not widen since type i512 size is greater than or equal to the max_widen_bitwidth threshold of 512 |
+| m_axi_gmem0  | Wq       | /users/shuozhez/l3/kernels/int8_terms.h:40:5      | read      | Inferred     | variable | words  | /users/shuozhez/l3/kernels/int8_terms.h:40:5     |            |                                                                                                          |
+| m_axi_gmem1  | s        | /users/shuozhez/l3/kernels/int8_terms.h:44:21     | read      | Widen Fail   |          | words  | /users/shuozhez/l3/kernels/int8_terms.h:40:5     | 214-234    | Sequential access length is not divisible by 2                                                           |
+| m_axi_gmem1  | s        | /users/shuozhez/l3/kernels/int8_terms.h:44:21     | read      | Inferred     | variable | words  | /users/shuozhez/l3/kernels/int8_terms.h:40:5     |            |                                                                                                          |
+| m_axi_gmem2  | xq       | /users/shuozhez/l3/kernels/int8_terms.h:35:10     | read      | Widen Fail   |          | load_x | /users/shuozhez/l3/kernels/int8_terms.h:32:5     | 214-353    | Could not widen since type i512 size is greater than or equal to the max_widen_bitwidth threshold of 512 |
+| m_axi_gmem2  | xq       | /users/shuozhez/l3/kernels/int8_terms.h:35:10     | read      | Inferred     | variable | load_x | /users/shuozhez/l3/kernels/int8_terms.h:32:5     |            |                                                                                                          |
+| m_axi_gmem3  | y        | /users/shuozhez/l3/kernels/gemv_int8_ps.cpp:77:14 | write     | Widen Fail   |          | rows   | /users/shuozhez/l3/kernels/gemv_int8_ps.cpp:68:5 | 214-234    | Sequential access length is not divisible by 2                                                           |
+| m_axi_gmem3  | y        | /users/shuozhez/l3/kernels/gemv_int8_ps.cpp:77:14 | write     | Inferred     | variable | rows   | /users/shuozhez/l3/kernels/gemv_int8_ps.cpp:68:5 |            |                                                                                                          |
++--------------+----------+---------------------------------------------------+-----------+--------------+----------+--------+--------------------------------------------------+------------+----------------------------------------------------------------------------------------------------------+
+
+    * Resolution URL: www.xilinx.com/cgi-bin/docs/rdoc?v=2023.1;t=hls+guidance;d=XXX-YYY.html (replace XXX-YYY with column value)
+
+================================================================
+== Bind Op Report
+================================================================
++-----------------------------------------+-----+--------+-------------+------+---------+---------+
+| Name                                    | DSP | Pragma | Variable    | Op   | Impl    | Latency |
++-----------------------------------------+-----+--------+-------------+------+---------+---------+
+| + gemv_int8_ps                          | 51  |        |             |      |         |         |
+|  + compute_terms                        | 42  |        |             |      |         |         |
+|    sub_ln28_fu_198_p2                   | -   |        | sub_ln28    | sub  | fabric  | 0       |
+|    sub_ln28_1_fu_218_p2                 | -   |        | sub_ln28_1  | sub  | fabric  | 0       |
+|    mul_27s_32s_32_2_1_U93               | 2   |        | mul         | mul  | auto    | 1       |
+|    sub_fu_354_p2                        | -   |        | sub         | add  | fabric  | 0       |
+|   + compute_terms_Pipeline_load_x       | 0   |        |             |      |         |         |
+|     add_ln32_fu_110_p2                  | -   |        | add_ln32    | add  | fabric  | 0       |
+|   + compute_terms_Pipeline_words        | 40  |        |             |      |         |         |
+|     add_ln40_fu_428_p2                  | -   |        | add_ln40    | add  | fabric  | 0       |
+|     mul_8s_8s_16_1_1_U11                | -   |        | P           | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_17s_17_4_1_U65     | 1   |        | mul_ln21    | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U38     | 1   |        | mul_ln21_1  | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_18_4_1_U70     | 1   |        | mul_ln21_2  | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_17_4_1_U66     | 1   |        | mul_ln21_3  | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U12                | -   |        | mul_ln21_4  | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U39     | 1   |        | mul_ln21_5  | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_18s_19_4_1_U71     | 1   |        | mul_ln21_6  | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U13                | -   |        | mul_ln21_7  | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U40     | 1   |        | mul_ln21_8  | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U14                | -   |        | mul_ln21_9  | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U41     | 1   |        | mul_ln21_10 | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_17_4_1_U67     | 1   |        | mul_ln21_11 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U15                | -   |        | mul_ln21_12 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U42     | 1   |        | mul_ln21_13 | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_19s_20_4_1_U72     | 1   |        | mul_ln21_14 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U16                | -   |        | mul_ln21_15 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U43     | 1   |        | mul_ln21_16 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U17                | -   |        | mul_ln21_17 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U44     | 1   |        | mul_ln21_18 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U18                | -   |        | mul_ln21_19 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U45     | 1   |        | mul_ln21_20 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U19                | -   |        | mul_ln21_21 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U46     | 1   |        | mul_ln21_22 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U20                | -   |        | mul_ln21_23 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U47     | 1   |        | mul_ln21_24 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U21                | -   |        | mul_ln21_25 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U48     | 1   |        | mul_ln21_26 | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_17_4_1_U68     | 1   |        | mul_ln21_27 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U22                | -   |        | mul_ln21_28 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U49     | 1   |        | mul_ln21_29 | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_20s_21_4_1_U73     | 1   |        | mul_ln21_30 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U23                | -   |        | mul_ln21_31 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U50     | 1   |        | mul_ln21_32 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U24                | -   |        | mul_ln21_33 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U51     | 1   |        | mul_ln21_34 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U25                | -   |        | mul_ln21_35 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U52     | 1   |        | mul_ln21_36 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U26                | -   |        | mul_ln21_37 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U53     | 1   |        | mul_ln21_38 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U27                | -   |        | mul_ln21_39 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U54     | 1   |        | mul_ln21_40 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U28                | -   |        | mul_ln21_41 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U55     | 1   |        | mul_ln21_42 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U29                | -   |        | mul_ln21_43 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U56     | 1   |        | mul_ln21_44 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U30                | -   |        | mul_ln21_45 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U57     | 1   |        | mul_ln21_46 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U31                | -   |        | mul_ln21_47 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U58     | 1   |        | mul_ln21_48 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U32                | -   |        | mul_ln21_49 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U59     | 1   |        | mul_ln21_50 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U33                | -   |        | mul_ln21_51 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U60     | 1   |        | mul_ln21_52 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U34                | -   |        | mul_ln21_53 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U61     | 1   |        | mul_ln21_54 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U35                | -   |        | mul_ln21_55 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U62     | 1   |        | mul_ln21_56 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U36                | -   |        | mul_ln21_57 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U63     | 1   |        | mul_ln21_58 | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_17_4_1_U69     | 1   |        | mul_ln21_59 | mul  | dsp48   | 3       |
+|     mul_8s_8s_16_1_1_U37                | -   |        | mul_ln21_60 | mul  | auto    | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U64     | 1   |        | mul_ln21_61 | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_21s_22_4_1_U74     | 1   |        | mul_ln21_62 | mul  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U38     | 1   |        | add_ln21    | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_17_4_1_U65     | 1   |        | add_ln21_1  | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_18_4_1_U70     | 1   |        | add_ln21_2  | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U39     | 1   |        | add_ln21_3  | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_17_4_1_U66     | 1   |        | add_ln21_4  | add  | dsp48   | 3       |
+|     add_ln21_5_fu_2606_p2               | -   |        | add_ln21_5  | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_18s_19_4_1_U71     | 1   |        | add_ln21_6  | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U40     | 1   |        | add_ln21_7  | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U41     | 1   |        | add_ln21_9  | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U42     | 1   |        | add_ln21_10 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_17_4_1_U67     | 1   |        | add_ln21_11 | add  | dsp48   | 3       |
+|     add_ln21_12_fu_2547_p2              | -   |        | add_ln21_12 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_19s_20_4_1_U72     | 1   |        | add_ln21_14 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U43     | 1   |        | add_ln21_15 | add  | dsp48   | 3       |
+|     add_ln21_16_fu_2657_p2              | -   |        | add_ln21_16 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U44     | 1   |        | add_ln21_17 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U45     | 1   |        | add_ln21_18 | add  | dsp48   | 3       |
+|     add_ln21_19_fu_2414_p2              | -   |        | add_ln21_19 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U46     | 1   |        | add_ln21_21 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U47     | 1   |        | add_ln21_22 | add  | dsp48   | 3       |
+|     add_ln21_23_fu_2426_p2              | -   |        | add_ln21_23 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U48     | 1   |        | add_ln21_24 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U49     | 1   |        | add_ln21_25 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_17_4_1_U68     | 1   |        | add_ln21_26 | add  | dsp48   | 3       |
+|     add_ln21_27_fu_2562_p2              | -   |        | add_ln21_27 | add  | fabric  | 0       |
+|     add_ln21_28_fu_2572_p2              | -   |        | add_ln21_28 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_20s_21_4_1_U73     | 1   |        | add_ln21_30 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U50     | 1   |        | add_ln21_31 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U51     | 1   |        | add_ln21_33 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U52     | 1   |        | add_ln21_34 | add  | dsp48   | 3       |
+|     add_ln21_35_fu_2438_p2              | -   |        | add_ln21_35 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U53     | 1   |        | add_ln21_37 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U54     | 1   |        | add_ln21_38 | add  | dsp48   | 3       |
+|     add_ln21_39_fu_2450_p2              | -   |        | add_ln21_39 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U55     | 1   |        | add_ln21_40 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U56     | 1   |        | add_ln21_41 | add  | dsp48   | 3       |
+|     add_ln21_42_fu_2466_p2              | -   |        | add_ln21_42 | add  | fabric  | 0       |
+|     add_ln21_43_fu_2476_p2              | -   |        | add_ln21_43 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U57     | 1   |        | add_ln21_45 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U58     | 1   |        | add_ln21_46 | add  | dsp48   | 3       |
+|     add_ln21_47_fu_2488_p2              | -   |        | add_ln21_47 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U59     | 1   |        | add_ln21_48 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U60     | 1   |        | add_ln21_49 | add  | dsp48   | 3       |
+|     add_ln21_50_fu_2504_p2              | -   |        | add_ln21_50 | add  | fabric  | 0       |
+|     add_ln21_51_fu_2514_p2              | -   |        | add_ln21_51 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U61     | 1   |        | add_ln21_52 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U62     | 1   |        | add_ln21_53 | add  | dsp48   | 3       |
+|     add_ln21_54_fu_2526_p2              | -   |        | add_ln21_54 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_16s_17_4_1_U63     | 1   |        | add_ln21_55 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_16s_17_4_1_U64     | 1   |        | add_ln21_56 | add  | dsp48   | 3       |
+|     mac_muladd_8s_8s_17s_17_4_1_U69     | 1   |        | add_ln21_57 | add  | dsp48   | 3       |
+|     add_ln21_58_fu_2587_p2              | -   |        | add_ln21_58 | add  | fabric  | 0       |
+|     add_ln21_59_fu_2597_p2              | -   |        | add_ln21_59 | add  | fabric  | 0       |
+|     add_ln21_60_fu_2621_p2              | -   |        | add_ln21_60 | add  | fabric  | 0       |
+|     mac_muladd_8s_8s_21s_22_4_1_U74     | 1   |        | P_1         | add  | dsp48   | 3       |
+|     fmul_32ns_32ns_32_4_max_dsp_1_U9    | 3   |        | mul1        | fmul | maxdsp  | 3       |
+|     add_ln45_fu_1092_p2                 | -   |        | add_ln45    | add  | fabric  | 0       |
+|  + accumulate                           | 4   |        |             |      |         |         |
+|    sub_ln45_fu_108_p2                   | -   |        | sub_ln45    | sub  | fabric  | 0       |
+|    sub_ln45_1_fu_137_p2                 | -   |        | sub_ln45_1  | sub  | fabric  | 0       |
+|    add_ln46_fu_156_p2                   | -   |        | add_ln46    | add  | fabric  | 0       |
+|    sub_ln46_fu_170_p2                   | -   |        | sub_ln46    | sub  | fabric  | 0       |
+|    sub_ln46_1_fu_190_p2                 | -   |        | sub_ln46_1  | sub  | fabric  | 0       |
+|    mul_32s_26s_32_2_1_U114              | 2   |        | mul         | mul  | auto    | 1       |
+|    sub13_fu_222_p2                      | -   |        | sub13       | add  | fabric  | 0       |
+|   + accumulate_Pipeline_chunks          | 2   |        |             |      |         |         |
+|     add_ln52_fu_182_p2                  | -   |        | add_ln52    | add  | fabric  | 0       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U107 | 2   |        | a_87        | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U107 | 2   |        | a_89        | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U107 | 2   |        | a_91        | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U107 | 2   |        | a_93        | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U107 | 2   |        | a_95        | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U107 | 2   |        | a_97        | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U107 | 2   |        | a_99        | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U107 | 2   |        | a_101       | fadd | fulldsp | 6       |
+|     add_ln62_fu_287_p2                  | -   |        | add_ln62    | add  | fabric  | 0       |
+|  + reduce_store                         | 5   |        |             |      |         |         |
+|   + reduce_store_Pipeline_rows          | 5   |        |             |      |         |         |
+|     add_ln68_fu_138_p2                  | -   |        | add_ln68    | add  | fabric  | 0       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U121 | 2   |        | add8_i      | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U121 | 2   |        | add8_i_s    | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U121 | 2   |        | add8_i_4    | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U121 | 2   |        | add8_i_3    | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U121 | 2   |        | add8_i_1    | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U121 | 2   |        | add8_i_1_1  | fadd | fulldsp | 6       |
+|     fadd_32ns_32ns_32_7_full_dsp_1_U121 | 2   |        | add8_i_2    | fadd | fulldsp | 6       |
+|     fmul_32ns_32ns_32_4_max_dsp_1_U122  | 3   |        | mul         | fmul | maxdsp  | 3       |
++-----------------------------------------+-----+--------+-------------+------+---------+---------+
+
+
+================================================================
+== Bind Storage Report
+================================================================
++------------------+------+------+--------+----------+---------+--------+---------+
+| Name             | BRAM | URAM | Pragma | Variable | Storage | Impl   | Latency |
++------------------+------+------+--------+----------+---------+--------+---------+
+| + gemv_int8_ps   | 72   | 0    |        |          |         |        |         |
+|   K_c_U          | -    | -    |        | K_c      | fifo    | srl    | 0       |
+|   M_c9_U         | -    | -    |        | M_c9     | fifo    | srl    | 0       |
+|   M_c_U          | -    | -    |        | M_c      | fifo    | srl    | 0       |
+|   y_c_U          | -    | -    |        | y_c      | fifo    | srl    | 0       |
+|   sx_c_U         | -    | -    |        | sx_c     | fifo    | srl    | 0       |
+|   terms_U        | -    | -    |        | terms    | fifo    | memory | 0       |
+|   partials_U     | -    | -    |        | partials | fifo    | srl    | 0       |
+|  + compute_terms | 8    | 0    |        |          |         |        |         |
+|    xbuf_U        | 8    | -    |        | xbuf     | ram_1p  | auto   | 1       |
++------------------+------+------+--------+----------+---------+--------+---------+
+
+
+================================================================
+== Pragma Report
+================================================================
+* Valid Pragma Syntax
++-----------------+-------------------------------------------------------------------------------------+------------------------------------------------+
+| Type            | Options                                                                             | Location                                       |
++-----------------+-------------------------------------------------------------------------------------+------------------------------------------------+
+| inline          |                                                                                     | ../kernels/gemv_int8_ps.cpp:24 in tree_sum     |
+| unroll          |                                                                                     | ../kernels/gemv_int8_ps.cpp:26 in tree_sum     |
+| unroll          |                                                                                     | ../kernels/gemv_int8_ps.cpp:28 in tree_sum     |
+| array_partition | variable = acc complete                                                             | ../kernels/gemv_int8_ps.cpp:48 in accumulate   |
+| pipeline        | II = 8                                                                              | ../kernels/gemv_int8_ps.cpp:53 in accumulate   |
+| loop_tripcount  | min = 1 max = 32768                                                                 | ../kernels/gemv_int8_ps.cpp:54 in accumulate   |
+| unroll          |                                                                                     | ../kernels/gemv_int8_ps.cpp:56 in accumulate   |
+| pipeline        | II = 8                                                                              | ../kernels/gemv_int8_ps.cpp:69 in reduce_store |
+| loop_tripcount  | min = 1 max = 4096                                                                  | ../kernels/gemv_int8_ps.cpp:70 in reduce_store |
+| array_partition | variable = v complete                                                               | ../kernels/gemv_int8_ps.cpp:72 in reduce_store |
+| unroll          |                                                                                     | ../kernels/gemv_int8_ps.cpp:74 in reduce_store |
+| interface       | m_axi port = Wq bundle = gmem0 max_read_burst_length = 64 num_read_outstanding = 16 | ../kernels/gemv_int8_ps.cpp:83 in gemv_int8_ps |
+| interface       | m_axi port = s bundle = gmem1 max_read_burst_length = 64 num_read_outstanding = 16  | ../kernels/gemv_int8_ps.cpp:84 in gemv_int8_ps |
+| interface       | m_axi port = xq bundle = gmem2                                                      | ../kernels/gemv_int8_ps.cpp:85 in gemv_int8_ps |
+| interface       | m_axi port = y bundle = gmem3                                                       | ../kernels/gemv_int8_ps.cpp:86 in gemv_int8_ps |
+| dataflow        |                                                                                     | ../kernels/gemv_int8_ps.cpp:87 in gemv_int8_ps |
+| stream          | variable = terms depth = 64                                                         | ../kernels/gemv_int8_ps.cpp:92 in gemv_int8_ps |
+| stream          | variable = partials depth = 32                                                      | ../kernels/gemv_int8_ps.cpp:93 in gemv_int8_ps |
+| inline          |                                                                                     | ../kernels/int8_terms.h:15 in group_dot        |
+| unroll          |                                                                                     | ../kernels/int8_terms.h:18 in group_dot        |
+| pipeline        | II = 1                                                                              | ../kernels/int8_terms.h:33 in compute_terms    |
+| loop_tripcount  | min = 1 max = 64                                                                    | ../kernels/int8_terms.h:34 in compute_terms    |
+| pipeline        | II = 1                                                                              | ../kernels/int8_terms.h:41 in compute_terms    |
+| loop_tripcount  | min = 1 max = 262144                                                                | ../kernels/int8_terms.h:42 in compute_terms    |
++-----------------+-------------------------------------------------------------------------------------+------------------------------------------------+
+
+

@@ -1,0 +1,2 @@
+[model] 12 layers, 123.5 M linear weights, quantized in 1.2 s
+RESULT ppl backend=golden tokens=204 ppl=66.058 time=91.3s gemvs=9996 mismatches=0

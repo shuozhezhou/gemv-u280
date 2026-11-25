@@ -1,0 +1,23 @@
+N=1 sq1024: kernel time   avg 0.112 ms  min 0.109 ms  max 0.125 ms  (2000 runs, 1 CUs) bandwidth     9.96 GB/s aggregate (bytes read / avg time), 9.96 GB/s per CU  TEST PASSED
+N=1 sq2048: kernel time   avg 0.351 ms  min 0.339 ms  max 0.370 ms  (2000 runs, 1 CUs) bandwidth     12.71 GB/s aggregate (bytes read / avg time), 12.71 GB/s per CU  TEST PASSED
+N=1 sq4096: kernel time   avg 1.316 ms  min 1.292 ms  max 1.336 ms  (2000 runs, 1 CUs) bandwidth     13.55 GB/s aggregate (bytes read / avg time), 13.55 GB/s per CU  TEST PASSED
+N=1 llama7b_ffn_11008x4096: kernel time   avg 3.454 ms  min 3.447 ms  max 3.471 ms  (1000 runs, 1 CUs) bandwidth     13.87 GB/s aggregate (bytes read / avg time), 13.87 GB/s per CU  TEST PASSED
+N=2 sq1024: kernel time   avg 0.079 ms  min 0.071 ms  max 0.106 ms  (2000 runs, 2 CUs) bandwidth     14.04 GB/s aggregate (bytes read / avg time), 7.02 GB/s per CU  TEST PASSED
+N=2 sq2048: kernel time   avg 0.198 ms  min 0.192 ms  max 0.220 ms  (2000 runs, 2 CUs) bandwidth     22.58 GB/s aggregate (bytes read / avg time), 11.29 GB/s per CU  TEST PASSED
+N=2 sq4096: kernel time   avg 0.688 ms  min 0.668 ms  max 0.719 ms  (2000 runs, 2 CUs) bandwidth     25.93 GB/s aggregate (bytes read / avg time), 12.96 GB/s per CU  TEST PASSED
+N=2 llama7b_ffn_11008x4096: kernel time   avg 1.759 ms  min 1.743 ms  max 1.791 ms  (1000 runs, 2 CUs) bandwidth     27.23 GB/s aggregate (bytes read / avg time), 13.62 GB/s per CU  TEST PASSED
+N=4 sq1024: kernel time   avg 0.074 ms  min 0.067 ms  max 0.084 ms  (2000 runs, 4 CUs) bandwidth     15.02 GB/s aggregate (bytes read / avg time), 3.76 GB/s per CU  TEST PASSED
+N=4 sq2048: kernel time   avg 0.138 ms  min 0.127 ms  max 0.164 ms  (2000 runs, 4 CUs) bandwidth     32.42 GB/s aggregate (bytes read / avg time), 8.10 GB/s per CU  TEST PASSED
+N=4 sq4096: kernel time   avg 0.372 ms  min 0.362 ms  max 0.398 ms  (2000 runs, 4 CUs) bandwidth     47.98 GB/s aggregate (bytes read / avg time), 12.00 GB/s per CU  TEST PASSED
+N=4 llama7b_ffn_11008x4096: kernel time   avg 0.917 ms  min 0.899 ms  max 0.944 ms  (1000 runs, 4 CUs) bandwidth     52.28 GB/s aggregate (bytes read / avg time), 13.07 GB/s per CU  TEST PASSED
+N=6 sq1024: kernel time   avg 0.078 ms  min 0.071 ms  max 0.116 ms  (2000 runs, 6 CUs) bandwidth     14.38 GB/s aggregate (bytes read / avg time), 2.40 GB/s per CU  TEST PASSED
+N=6 sq2048: kernel time   avg 0.117 ms  min 0.110 ms  max 0.123 ms  (2000 runs, 6 CUs) bandwidth     38.15 GB/s aggregate (bytes read / avg time), 6.36 GB/s per CU  TEST PASSED
+N=6 sq4096: kernel time   avg 0.282 ms  min 0.270 ms  max 0.314 ms  (2000 runs, 6 CUs) bandwidth     63.35 GB/s aggregate (bytes read / avg time), 10.56 GB/s per CU  TEST PASSED
+N=6 llama7b_ffn_11008x4096: kernel time   avg 0.648 ms  min 0.625 ms  max 0.680 ms  (1000 runs, 6 CUs) bandwidth     73.95 GB/s aggregate (bytes read / avg time), 12.32 GB/s per CU  TEST PASSED
+N=8 sq1024: kernel time   avg 0.087 ms  min 0.081 ms  max 0.102 ms  (2000 runs, 8 CUs) bandwidth     12.83 GB/s aggregate (bytes read / avg time), 1.60 GB/s per CU  TEST PASSED
+N=8 sq2048: kernel time   avg 0.116 ms  min 0.106 ms  max 0.142 ms  (2000 runs, 8 CUs) bandwidth     38.53 GB/s aggregate (bytes read / avg time), 4.82 GB/s per CU  TEST PASSED
+N=8 sq4096: kernel time   avg 0.240 ms  min 0.227 ms  max 0.270 ms  (2000 runs, 8 CUs) bandwidth     74.45 GB/s aggregate (bytes read / avg time), 9.31 GB/s per CU  TEST PASSED
+N=8 llama7b_ffn_11008x4096: kernel time   avg 0.510 ms  min 0.494 ms  max 0.561 ms  (1000 runs, 8 CUs) bandwidth     94.08 GB/s aggregate (bytes read / avg time), 11.76 GB/s per CU  TEST PASSED
+steady N=1: kernel time   avg 1.318 ms  min 1.307 ms  max 1.339 ms  (15000 runs, 1 CUs)
+steady N=8: kernel time   avg 0.234 ms  min 0.223 ms  max 1.022 ms  (120000 runs, 8 CUs)
+MULTI DONE x8a

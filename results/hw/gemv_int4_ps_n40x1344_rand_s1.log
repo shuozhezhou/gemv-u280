@@ -1,0 +1,2 @@
+cannot open data/n40x1344_rand_s1/y_int4.f32.bin
+case data/n40x1344_rand_s1: M=40 K=1344 kind=rand seed=1, kernel gemv_int4_ps, 100 timed run(s)

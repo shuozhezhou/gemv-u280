@@ -1,0 +1,23 @@
+CHECKSUMS PASSED
+CHECKSUMS PASSED
+gemv_int8_fx   n64_rand_s1          TEST PASSED  kernel time   avg 0.034 ms  min 0.030 ms  max 0.046 ms  (100 runs)
+gemv_int8_fx   n64_onehot_s1        TEST PASSED  kernel time   avg 0.028 ms  min 0.026 ms  max 0.041 ms  (100 runs)
+gemv_int8_fx   n64_pm127_s1         TEST PASSED  kernel time   avg 0.028 ms  min 0.027 ms  max 0.046 ms  (100 runs)
+gemv_int8_fx   n64x128_zero_s1      TEST PASSED  kernel time   avg 0.028 ms  min 0.026 ms  max 0.030 ms  (100 runs)
+gemv_int8_fx   n128_rand_s1         TEST PASSED  kernel time   avg 0.029 ms  min 0.026 ms  max 0.032 ms  (100 runs)
+gemv_int8_fx   n100x256_rand_s1     TEST PASSED  kernel time   avg 0.031 ms  min 0.029 ms  max 0.034 ms  (100 runs)
+gemv_int8_fx   n40x1344_rand_s1     TEST PASSED  kernel time   avg 0.031 ms  min 0.029 ms  max 0.035 ms  (100 runs)
+gemv_int8_fx   n4096_rand_s1        TEST PASSED  kernel time   avg 1.307 ms  min 1.301 ms  max 1.330 ms  (100 runs)
+gemv_int8_fx   n4096_rand_s2        TEST PASSED  kernel time   avg 1.312 ms  min 1.305 ms  max 1.327 ms  (100 runs)
+gemv_int8_fx   n4096_rand_s3        TEST PASSED  kernel time   avg 1.314 ms  min 1.304 ms  max 1.337 ms  (100 runs)
+sq256: kernel time   avg 0.032 ms  min 0.030 ms  max 0.049 ms  (2000 runs) | TEST PASSED
+sq512: kernel time   avg 0.050 ms  min 0.045 ms  max 0.071 ms  (2000 runs) | TEST PASSED
+gpt2_attn_768x768: kernel time   avg 0.073 ms  min 0.069 ms  max 0.090 ms  (2000 runs) | TEST PASSED
+sq1024: kernel time   avg 0.111 ms  min 0.105 ms  max 0.125 ms  (2000 runs) | TEST PASSED
+gpt2_mlp_3072x768: kernel time   avg 0.206 ms  min 0.201 ms  max 0.223 ms  (2000 runs) | TEST PASSED
+sq2048: kernel time   avg 0.347 ms  min 0.339 ms  max 0.493 ms  (2000 runs) | TEST PASSED
+sq4096: kernel time   avg 1.312 ms  min 1.294 ms  max 1.337 ms  (2000 runs) | TEST PASSED
+llama7b_attn_4096x4096: kernel time   avg 1.311 ms  min 1.302 ms  max 1.335 ms  (2000 runs) | TEST PASSED
+llama7b_ffn_11008x4096: kernel time   avg 3.450 ms  min 3.441 ms  max 3.481 ms  (1000 runs) | TEST PASSED
+sq4096: kernel time   avg 1.312 ms  min 1.304 ms  max 1.343 ms  (16000 runs) | TEST PASSED
+L3 DONE gemv_int8_fx

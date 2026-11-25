@@ -37,3 +37,7 @@ __pycache__/
 
 # Keep the measured logs we copy into results/ on purpose
 !results/**/*.log
+
+# The Llama-2-7B FFN-size test case (11008x4096) is 243 MB: re-create it with
+# python3 scripts/gen_data.py (see README); it is not committed.
+data/llama7b*/

@@ -1,0 +1,11 @@
+RESULT ppl backend=fpga smooth=None tokens=204 ppl=63.877 time=161.2s gemvs=9996 mismatches=0
+RESULT ppl backend=fpga smooth=0.5 tokens=204 ppl=13.436 time=155.6s gemvs=9996 mismatches=0
+TEXT >>> Field-programmable gate arrays are used to store and retrieve data from a computer. The data is then sent to a computer and stored in a memory.\n\nThe computer then sends the data to a computer that is connected to the Internet. The computer then sends the data to a computer that is connected to the Internet.\n\nThe computer then sends
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=64 steps=70 wall=53.49s (1.31 steps/s) gemvs=3430 fpga_kernel_time=0.96s (13.7 ms/token, 3430 calls, 9.01 GB/s of weights incl. call overhead) bit_exact_mismatches=0/3430
+TEXT >>> Field-programmable gate arrays are used to store and retrieve data from a computer. The data is then sent to a computer and stored in a memory.\n\nThe computer then sends the data to a computer that is connected to the Internet. The computer then sends the data to a computer that is connected to the Internet.\n\nThe computer then sends
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=64 steps=70 wall=2.50s (28.04 steps/s) gemvs=3430 fpga_kernel_time=0.96s (13.7 ms/token, 3430 calls, 9.04 GB/s of weights incl. call overhead)
+TEXT >>> Field-programmable gate arrays are the "troubleshooting and, in the other, the the-troubleshooting.\n"The "troubleshooting" in the "troubleshooting" in the "troubleshooting" in the "trou-trou-trou-trou-trou-t
+RESULT gen backend=fpga smooth=None prompt_tokens=7 new_tokens=64 steps=70 wall=53.22s (1.32 steps/s) gemvs=3430 fpga_kernel_time=0.96s (13.8 ms/token, 3430 calls, 8.98 GB/s of weights incl. call overhead) bit_exact_mismatches=0/3430
+TEXT >>> Field-programmable gate arrays are used to control the power supply and the power supply voltage. The power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled by the voltage regulator.\n\nThe power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled
+RESULT gen backend=fp32 smooth=None prompt_tokens=7 new_tokens=64 steps=70 wall=15.07s (4.65 steps/s) gemvs=3430
+GPT2 DONE L3ps

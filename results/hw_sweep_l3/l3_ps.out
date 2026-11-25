@@ -1,0 +1,37 @@
+Traceback (most recent call last):
+  File "/mydata/l3/scripts/check.py", line 92, in <module>
+    main()
+  File "/mydata/l3/scripts/check.py", line 75, in main
+    sys.exit(verify_checksums())
+  File "/mydata/l3/scripts/check.py", line 46, in verify_checksums
+    with open(path) as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/mydata/l3/scripts/../data/CHECKSUMS.md5'
+Traceback (most recent call last):
+  File "/mydata/l3/scripts/check.py", line 92, in <module>
+    main()
+  File "/mydata/l3/scripts/check.py", line 75, in main
+    sys.exit(verify_checksums())
+  File "/mydata/l3/scripts/check.py", line 46, in verify_checksums
+    with open(path) as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/mydata/l3/scripts/../data/CHECKSUMS.md5'
+gemv_int8_ps   n64_rand_s1          TEST PASSED  kernel time   avg 0.033 ms  min 0.031 ms  max 0.050 ms  (100 runs)
+gemv_int8_ps   n64_onehot_s1        TEST PASSED  kernel time   avg 0.029 ms  min 0.027 ms  max 0.046 ms  (100 runs)
+gemv_int8_ps   n64_pm127_s1         TEST PASSED  kernel time   avg 0.029 ms  min 0.028 ms  max 0.034 ms  (100 runs)
+gemv_int8_ps   n64x128_zero_s1      TEST PASSED  kernel time   avg 0.030 ms  min 0.028 ms  max 0.039 ms  (100 runs)
+gemv_int8_ps   n128_rand_s1         TEST PASSED  kernel time   avg 0.031 ms  min 0.029 ms  max 0.033 ms  (100 runs)
+gemv_int8_ps   n100x256_rand_s1     TEST PASSED  kernel time   avg 0.030 ms  min 0.028 ms  max 0.035 ms  (100 runs)
+gemv_int8_ps   n40x1344_rand_s1     TEST PASSED  kernel time   avg 0.033 ms  min 0.029 ms  max 0.051 ms  (100 runs)
+gemv_int8_ps   n4096_rand_s1        TEST PASSED  kernel time   avg 1.310 ms  min 1.301 ms  max 1.339 ms  (100 runs)
+gemv_int8_ps   n4096_rand_s2        TEST PASSED  kernel time   avg 1.311 ms  min 1.302 ms  max 1.331 ms  (100 runs)
+gemv_int8_ps   n4096_rand_s3        TEST PASSED  kernel time   avg 1.313 ms  min 1.305 ms  max 1.350 ms  (100 runs)
+sq256: kernel time   avg 0.035 ms  min 0.032 ms  max 0.069 ms  (2000 runs) | TEST PASSED
+sq512: kernel time   avg 0.050 ms  min 0.045 ms  max 0.065 ms  (2000 runs) | TEST PASSED
+gpt2_attn_768x768: kernel time   avg 0.072 ms  min 0.067 ms  max 0.088 ms  (2000 runs) | TEST PASSED
+sq1024: kernel time   avg 0.106 ms  min 0.103 ms  max 0.120 ms  (2000 runs) | TEST PASSED
+gpt2_mlp_3072x768: kernel time   avg 0.208 ms  min 0.203 ms  max 0.226 ms  (2000 runs) | TEST PASSED
+sq2048: kernel time   avg 0.346 ms  min 0.339 ms  max 0.361 ms  (2000 runs) | TEST PASSED
+sq4096: kernel time   avg 1.312 ms  min 1.296 ms  max 1.340 ms  (2000 runs) | TEST PASSED
+llama7b_attn_4096x4096: kernel time   avg 1.312 ms  min 1.303 ms  max 1.330 ms  (2000 runs) | TEST PASSED
+llama7b_ffn_11008x4096: kernel time   avg 3.450 ms  min 3.442 ms  max 3.473 ms  (1000 runs) | TEST PASSED
+sq4096: kernel time   avg 1.311 ms  min 1.303 ms  max 1.337 ms  (16000 runs) | TEST PASSED
+L3 DONE gemv_int8_ps

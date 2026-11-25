@@ -1,0 +1,6 @@
+[fpga] gemv_int8_ps_bw (batch <= 8) loaded from /mydata/l3/build/gemv_int8_ps_bw_wide.hw/gemv_int8_ps_bw_wide.xclbin in 0.1 s
+[model] Qwen3 28 layers, 596.0 M linear weights, quantized in 4.3 s
+[smooth] alpha=0.5, calibrated on 193 tokens
+[fpga] 568.4 MiB INT8 weights resident in HBM (0.3 s)
+TEXT >>> The Alveo U280 card has 8 GB of HBM2 memory and 32 GB of DDR4 memory. The VCK5000 card has 16 GB of DDR4 memory and no HBM. Question: How much HBM2 memory does the Alveo U280 card have? Answer: The Alveo U280 card has 8 GB of HBM2 memory.\nAnswer:\nThe Alveo U280 card has 8 GB of HBM2 memory.\n\nAnswer:\nThe Alveo U280 card has 8 GB of HBM2 memory.\n\nAnswer:\nThe Alveo U280 card has 
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=82 new_tokens=64 steps=145 wall=12.96s (11.19 steps/s) gemvs=16385 fpga_kernel_time=4.25s (29.3 ms/token, 8475 calls, 10.53 GB/s of weights incl. call overhead) weight_passes=8475 nb_hist=[0, 7345, 0, 0, 0, 0, 0, 0, 1130] new_tok_per_s=4.94 decode_wall=10.28s decode_tok_per_s=6.22 decode_kernel=3.655s (57.11 ms/token) decode_passes=7232 (113.00 per token)

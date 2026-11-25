@@ -1,0 +1,8 @@
+label,latency_cycles,latency_ms_300MHz,interval,slack_ns,loop_II,BRAM_18K,DSP,FF,LUT,URAM
+dse_w8_g64_p1,1048682,3.492,1048586,-0.04,"load_x=1 words=1 chunks=4 rows=1",72,47,16502,14681,0
+dse_w8_g64_p8,262313,0.874,262314,-0.24,"load_x=1 words=1 chunks=8 rows=8",72,51,17489,16060,0
+dse_w4_g64_p8,131248,0.437,131249,-0.24,"load_x=1 words=1 chunks=8 rows=8",66,93,21509,19608,0
+dse_w4_g128_p8,131243,0.437,131244,-0.24,"load_x=1 words=1 chunks=8 rows=8",64,84,22097,20091,0
+dse_w4_g128_p1,524396,1.746,524298,-0.04,"load_x=1 words=1 chunks=4 rows=1",64,80,21111,18716,0
+gemv_int8_ps,262313,0.874,262314,-0.24,"load_x=1 words=1 chunks=8 rows=8",72,51,17537,16092,0
+gemv_int8_fx,262313,0.874,262314,-0.00,"load_x=1 words=1 sums=1 rows=1",72,50,16984,15392,0

@@ -1,0 +1,6 @@
+[fpga] gemv_int8_ps_bw (batch <= 8) loaded from /mydata/l3/build/gemv_int8_ps_bw_wide.hw/gemv_int8_ps_bw_wide.xclbin in 0.1 s
+[model] Qwen3 28 layers, 596.0 M linear weights, quantized in 4.3 s
+[smooth] alpha=0.5, calibrated on 193 tokens
+[fpga] 568.4 MiB INT8 weights resident in HBM (0.3 s)
+TEXT >>> Field-programmable gate arrays are a cornerstone of modern electronics, enabling the creation of complex and highly integrated circuits. However, the increasing complexity and size of these arrays have led to significant challenges in their performance and reliability. One of the most critical issues is the degradation of performance and reliability due to the accumulation of defects in the gate structures. This degradation can
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=64 steps=70 wall=7.59s (9.22 steps/s) gemvs=7910 fpga_kernel_time=3.56s (50.9 ms/token, 7345 calls, 10.88 GB/s of weights incl. call overhead) weight_passes=7345 nb_hist=[0, 7232, 0, 0, 0, 0, 113, 0, 0] new_tok_per_s=8.43 decode_wall=7.42s decode_tok_per_s=8.63 decode_kernel=3.506s (54.78 ms/token) decode_passes=7232 (113.00 per token)

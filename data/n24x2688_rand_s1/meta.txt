@@ -1,0 +1,5 @@
+M 24
+K 2688
+group 64
+seed 1
+kind rand

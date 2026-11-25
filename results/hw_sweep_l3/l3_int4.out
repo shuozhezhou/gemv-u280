@@ -1,0 +1,23 @@
+CHECKSUMS PASSED
+CHECKSUMS PASSED
+gemv_int4_ps   n64_rand_s1            
+gemv_int4_ps   n64_onehot_s1          
+gemv_int4_ps   n64_pm127_s1           
+gemv_int4_ps   n64x128_zero_s1      TEST PASSED  kernel time   avg 0.029 ms  min 0.027 ms  max 0.036 ms  (100 runs)
+gemv_int4_ps   n128_rand_s1         TEST PASSED  kernel time   avg 0.031 ms  min 0.029 ms  max 0.051 ms  (100 runs)
+gemv_int4_ps   n100x256_rand_s1     TEST PASSED  kernel time   avg 0.029 ms  min 0.027 ms  max 0.036 ms  (100 runs)
+gemv_int4_ps   n40x1344_rand_s1       
+gemv_int4_ps   n4096_rand_s1        TEST PASSED  kernel time   avg 0.676 ms  min 0.667 ms  max 0.692 ms  (100 runs)
+gemv_int4_ps   n4096_rand_s2        TEST PASSED  kernel time   avg 0.678 ms  min 0.670 ms  max 0.694 ms  (100 runs)
+gemv_int4_ps   n4096_rand_s3        TEST PASSED  kernel time   avg 0.678 ms  min 0.672 ms  max 0.694 ms  (100 runs)
+sq256: kernel time   avg 0.034 ms  min 0.029 ms  max 0.050 ms  (2000 runs) | TEST PASSED
+sq512: kernel time   avg 0.041 ms  min 0.039 ms  max 0.066 ms  (2000 runs) | TEST PASSED
+gpt2_attn_768x768: kernel time   avg 0.052 ms  min 0.047 ms  max 0.075 ms  (2000 runs) | TEST PASSED
+sq1024: kernel time   avg 0.069 ms  min 0.065 ms  max 0.086 ms  (2000 runs) | TEST PASSED
+gpt2_mlp_3072x768: kernel time   avg 0.121 ms  min 0.115 ms  max 0.142 ms  (2000 runs) | TEST PASSED
+sq2048: kernel time   avg 0.189 ms  min 0.183 ms  max 0.205 ms  (2000 runs) | TEST PASSED
+sq4096: kernel time   avg 0.677 ms  min 0.660 ms  max 0.703 ms  (2000 runs) | TEST PASSED
+llama7b_attn_4096x4096: kernel time   avg 0.677 ms  min 0.668 ms  max 0.703 ms  (2000 runs) | TEST PASSED
+llama7b_ffn_11008x4096: kernel time   avg 1.748 ms  min 1.742 ms  max 1.772 ms  (1000 runs) | TEST PASSED
+sq4096: kernel time   avg 0.677 ms  min 0.668 ms  max 0.713 ms  (30000 runs) | TEST PASSED
+L3 DONE gemv_int4_ps

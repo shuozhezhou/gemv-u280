@@ -1,0 +1,11 @@
+RESULT ppl backend=fpga smooth=None tokens=204 ppl=64.667 time=161.1s gemvs=9996 mismatches=0
+RESULT ppl backend=fpga smooth=0.5 tokens=204 ppl=13.504 time=158.8s gemvs=9996 mismatches=0
+TEXT >>> Field-programmable gate arrays are a common feature of the Raspberry Pi. The Raspberry Pi is a small, low-cost, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=64 steps=70 wall=54.32s (1.29 steps/s) gemvs=3430 fpga_kernel_time=0.96s (13.8 ms/token, 3430 calls, 8.97 GB/s of weights incl. call overhead) bit_exact_mismatches=0/3430
+TEXT >>> Field-programmable gate arrays are a common feature of the Raspberry Pi. The Raspberry Pi is a small, low-cost, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low-power, low
+RESULT gen backend=fpga smooth=0.5 prompt_tokens=7 new_tokens=64 steps=70 wall=2.49s (28.11 steps/s) gemvs=3430 fpga_kernel_time=0.96s (13.7 ms/token, 3430 calls, 9.02 GB/s of weights incl. call overhead)
+TEXT >>> Field-programmable gate arrays are the "troubleshooting and, in the other, the the-troubleshooting, the-troubleshooting, the-troubleshooting, the-trou.\n"\n"\n"\n"\n"\n"\n"\n"\n"\n"\n"\n"\n
+RESULT gen backend=fpga smooth=None prompt_tokens=7 new_tokens=64 steps=70 wall=54.45s (1.29 steps/s) gemvs=3430 fpga_kernel_time=0.96s (13.7 ms/token, 3430 calls, 9.00 GB/s of weights incl. call overhead) bit_exact_mismatches=0/3430
+TEXT >>> Field-programmable gate arrays are used to control the power supply and the power supply voltage. The power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled by the voltage regulator.\n\nThe power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled by the voltage regulator. The power supply voltage is controlled
+RESULT gen backend=fp32 smooth=None prompt_tokens=7 new_tokens=64 steps=70 wall=15.11s (4.63 steps/s) gemvs=3430
+GPT2 DONE L3fx

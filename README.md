@@ -18,7 +18,14 @@ Shuozhe Zhou, Yifan Zhu
 > a fitted cycle model, and a fair multi-threaded CPU baseline with RAPL energy (section 9).
 > Supplement report:
 > [`reports/ProjectUpdate2-Supplement-ShuozheZhou-YifanZhu.pdf`](reports/ProjectUpdate2-Supplement-ShuozheZhou-YifanZhu.pdf)
-> (the submitted report plus section 4.3).
+> (the submitted report plus sections 4.3 and 4.4).
+>
+> **Nov 25: L3 on the board and whole LLMs on the card** (section 10). L3 kernels at one
+> 64-weight group per cycle (4096 × 4096 in 1.31 ms, below the CPU energy crossover; INT4 in
+> 0.68 ms), up to 8 compute units after fixing an HBM-switch mapping problem (94 GB/s,
+> 8.4 mJ per GEMV), GPT-2 small and Qwen3-0.6B running every linear layer on the U280
+> (bit-exact, perplexity within 1% of FP32 with smoothing), and a batched kernel used for
+> speculative decoding. The supplement report includes these results as section 4.4.
 >
 > Project Update 1 is frozen as branch and release
 > [`project-update-1`](https://github.com/shuozhezhou/gemv-u280/tree/project-update-1).
@@ -43,8 +50,8 @@ The work is split into layers; each starts from a design that passes all tests.
 | L0 | Repository, file format, NumPy golden model, XRT host, tests | **done** |
 | L1 | FP32 GEMV, one HBM channel, pipelined dot product | **done — bit-exact on the U280** |
 | L2 | Group-wise INT8 weights (64 per group, FP32 scale) | **done — bit-exact on the U280, 52× faster than L1** |
-| L3 | Partial sums for II = 1, dataflow, several HBM channels | next |
-| L4 | INT4, real Llama-2-7B weights, GPU comparison | optional |
+| L3 | Partial sums for II = 1, dataflow, several HBM channels | **done — 1.31 ms, up to 8 CUs / 94 GB/s (section 10)** |
+| L4 | INT4 kernel, real models, batching | **INT4 on the board; GPT-2 and Qwen3 end to end; batched kernel + speculative decoding (section 10)**. Llama-2-7B weights and GPU comparison not done |
 
 ## 2. What is implemented
 
@@ -80,7 +87,20 @@ Update 2 (no new kernel; measurements and analysis on the Update 1 designs):
 - **Bit-width design-space exploration** (software): weights 8/6/4/3/2 bits ×
   group size 32/64/128/per-row, activations 8/6/4 bits (section 8).
 - **Input data documented** (section 3.1) and **contributions / code sources**
-  stated (sections 10 and 11).
+  stated (sections 12 and 13).
+
+After Update 2 (section 10):
+
+- **L3 kernels** `gemv_int8_ps` (8 interleaved partial sums), `gemv_int8_fx` (fixed-point
+  accumulation) and `gemv_int4_ps` (INT4), sharing the front end `kernels/int8_terms.h`;
+  testbenches, sw_emu / hw_emu and board runs, all bit-exact against new golden models.
+- **Multi-CU bitstreams** (2, 4, 8 CUs, `kernels/gemv_int8_ps_x*.cfg`) and a multi-CU host
+  (`host/host_multi.cpp`).
+- **Batched kernels** `gemv_int8_ps_b` and `gemv_int8_ps_bw`: one pass over W for up to 8
+  activation vectors.
+- **LLM driver** `host/llm_fpga.py`: GPT-2 / Qwen3 inference with every linear layer on the card,
+  perplexity, SmoothQuant-style smoothing, batched perplexity and prompt-lookup speculative
+  decoding.
 
 ## 3. Files
 
@@ -90,6 +110,16 @@ kernels/gemv_fp32.cpp     L1 FP32 kernel
 kernels/gemv_int8.cpp     L2 INT8 kernel
 kernels/gemv_fp32.cfg     v++ link config: W -> HBM[0], x,y -> HBM[1]
 kernels/gemv_int8.cfg     v++ link config: Wq -> HBM[0], s -> HBM[1], xq,y -> HBM[2]
+kernels/int8_terms.h      L3 front end: one flattened loop over all 64-weight groups (II = 1)
+kernels/gemv_int8_ps.cpp  L3a: 8 interleaved FP32 partial sums + adder tree (dataflow)
+kernels/gemv_int8_fx.cpp  L3b: ap_fixed<48,24> accumulation
+kernels/gemv_int4_ps.cpp  L3c: INT4 weights, 128 per 512-bit word
+kernels/gemv_int8_ps_b.cpp, gemv_int8_ps_bw.cpp   batched L3a (up to 8 vectors per weight pass)
+kernels/gemv_int8_ps_x{2,4,8}*.cfg   multi-CU link configs (*_aligned: banks behind each CU's switch)
+kernels/gemv_dse.cpp      csynth-only bit-width / group-size DSE kernel
+host/host_multi.cpp       XRT host for N CUs (rows split across CUs)
+host/llm_fpga.py          GPT-2 / Qwen3 on the card (pyxrt), perplexity, speculative decoding
+host/bench_batch.py       batched kernel: time and bit-exactness for 1..8 vectors
 tb/tb_gemv_fp32.cpp       HLS C testbench, FP32 (tolerance 1e-6 x max|y|; all bit-exact)
 tb/tb_gemv_int8.cpp       HLS C testbench, INT8 (bit-exact required)
 host/host.cpp             XRT host program + CPU version
@@ -102,7 +132,8 @@ data/FORMAT.md            data file format and quantization formulas
 data/<case>/              committed small test cases: inputs + golden outputs
 data/CHECKSUMS.md5        checksums of the generated 4096 x 4096 cases
 results/                  our logs and reports (csim, csynth, sw_emu, hw_emu, hw_build, hw,
-                          accuracy, dse)
+                          accuracy, dse, hw_sweep, hw_sweep_l3, multi_cu, gpt2, qwen3,
+                          llm_on_fpga, spec_decode, l3/NOTES.md)
 Makefile, env.sh          build/run commands and tool setup
 ```
 
@@ -227,9 +258,31 @@ xbutil examine                              # card must show "Yes" under Ready
 ./build/gemv_host build/gemv_int8.hw/gemv_int8.xclbin gemv_int8 data/n4096_rand_s1 100
 ```
 
-Arguments: `<xclbin> <gemv_fp32|gemv_int8> <case_dir> [timed runs]`. The host writes
+Arguments: `<xclbin> <kernel> <case_dir> [timed runs]`, kernel = `gemv_fp32`, `gemv_int8`,
+`gemv_int8_ps`, `gemv_int8_fx` or `gemv_int4_ps`. The host writes
 the output to `build/y_out.f32.bin`; `python3 scripts/check.py <case> build/y_out.f32.bin --kernel fp32`
 checks it independently.
+
+### 5.6 L3, several CUs and whole models (section 10)
+
+```bash
+make xclbin KERNEL=gemv_int8_ps TARGET=hw                     # also gemv_int8_fx, gemv_int4_ps
+make xclbin KERNEL=gemv_int8_ps TARGET=hw NCU=8 TAG=_aligned  # kernels/gemv_int8_ps_x8_aligned.cfg
+make xclbin KERNEL=gemv_int8_ps_bw TARGET=hw                  # batched kernel
+make host_multi
+# on the U280 node
+./build/gemv_host_multi <xclbin> gemv_int8_ps 8 data/n4096_rand_s1 2000
+python3 host/llm_fpga.py --model <gpt2 dir> --backend fpga --xclbin <xclbin> --kernel gemv_int8_ps \
+    --cus 4 --smooth 0.5 --calib calib_text.txt --ppl ppl_text.txt --check
+python3 host/llm_fpga.py --model <gpt2 dir> --backend fpga --xclbin <bw xclbin> --kernel gemv_int8_ps_bw \
+    --smooth 0.5 --calib calib_text.txt --prompt "..." --tokens 128 --spec 7
+python3 host/bench_batch.py <bw xclbin> 200 gemv_int8_ps_bw
+```
+
+Model directories hold the Hugging Face files (`model.safetensors`, `config.json`, `vocab.json`,
+`merges.txt`) of `openai-community/gpt2` and `Qwen/Qwen3-0.6B`. The texts used for perplexity
+and calibration are in `results/gpt2/`. `scripts/run_spec_board.sh` runs the speculative-decoding
+experiment with board power sampling.
 
 ## 6. Results
 
@@ -418,34 +471,212 @@ pushed with the board results.
 (~67 J/token on the board). The down projection (K = 11008) exceeds MAX_K = 4096 and is
 counted at the gate/up time.
 
-## 10. Next steps
+## 10. L3 on the board, INT4, several HBM channels, whole LLMs and speculative decoding (Nov 25)
 
-- L3: remove the II = 7 FP32 accumulation chain, either with several partial sums or
-  by accumulating in fixed point (`ap_fixed`), overlap load / compute / store with
-  dataflow, and spread rows over several HBM pseudo-channels; target ≥ 70% of the peak
-  bandwidth of the channels used.
-- ~~Hardware runs at 256 × 256 and 1024 × 1024~~ done, see section 9.
-- L3 target from section 9: 4096 × 4096 in ≤ 1.47 ms (energy parity with a 2-socket Xeon).
-- Other bit widths in hardware (INT4 / `ap_int`), guided by section 8.
-- Real Llama-2-7B weights and recorded activations as inputs; GPU baseline (CPU baseline done, section 9).
+All numbers below are measured on the U280 (node pc157, XRT 2.15, kernels at 300 MHz) unless marked
+otherwise, and every hardware result is compared **bit for bit** with its own software golden model
+(`scripts/gen_data.py`: `golden_int8_ps`, `golden_int8_fx`, `golden_int4_ps`). Lab notes with the
+build history: `results/l3/NOTES.md`.
 
-## 11. Contributions
+### 10.1 L3 kernels: II = 1 per 64-weight group
+
+| Kernel | What changed vs L2 | 4096 × 4096 (ms) | GB/s | Board W | mJ / GEMV | LUT | DSP |
+|---|---|---:|---:|---:|---:|---:|---:|
+| L2 `gemv_int8` | — | 7.500 | 2.4 | 23.3 | 174.6 | — | — |
+| L3a `gemv_int8_ps` | 8 interleaved FP32 partial sums + fixed adder tree, rows × groups loop flattened, dataflow | **1.311** | 13.6 | 24.4 | **32.0** | 7,912 | 78 |
+| L3b `gemv_int8_fx` | one `ap_fixed<48,24>` accumulator per row (exact adds) | 1.307 | 13.7 | — | — | 7,497 | 77 |
+| L3c `gemv_int4_ps` | INT4 weights, 128 per 512-bit word (2 groups per cycle) | **0.677** | 13.9 | 24.7 | **16.7** | 9,327 | 147 |
+
+Post-route timing closes at 300 MHz for all three (WNS +0.016 ns). L3a is 5.7× faster than L2 and
+goes **below the 1.47 ms energy crossover** of section 9: one GEMV now costs 32 mJ on the card vs
+34.2 mJ for the best 2-socket Xeon run. One HBM pseudo-channel limits it (13.6 of ~14.4 GB/s);
+INT4 halves the bytes and the time. Llama-2-7B FFN size (11008 × 4096): 3.45 ms (L3a), 1.75 ms (INT4).
+Logs: `results/hw_sweep_l3/`, `results/hw/gemv_int{8,4}_ps_*`, build reports `results/hw_build/`.
+
+### 10.2 Several compute units: the HBM switch matters
+
+N copies of L3a, each with its own HBM banks, split the rows of every matrix.
+The first mapping (CU i on banks 2(i−1), 2(i−1)+1) gave 4 CUs **no gain over 2**
+(27.7 GB/s). A pair test (`results/multi_cu/cu_pairs.py`) showed CU3 + CU4 together took 0.71 ms
+while every other pair took ~0.44 ms. The link report shows why: v++ attaches CU i's four AXI ports
+to HBM switch ports S(4i−3)..S(4i), so CUs 3 and 4 had to cross between HBM switches to reach their
+banks. Mapping each CU's banks behind its own switch (`kernels/gemv_int8_ps_x{4,8}_aligned.cfg`,
+CU i → HBM[4(i−1)], HBM[4(i−1)+1]) removes the crossing:
+
+| 4096 × 4096 | 1 CU | 2 CUs | 4 CUs | 8 CUs |
+|---|---:|---:|---:|---:|
+| first mapping (ms) | 1.315 | 0.683 | 0.680 | — |
+| switch-aligned (ms) | 1.316 | 0.688 | **0.371** | **0.240** |
+| 11008 × 4096, aligned (GB/s) | 13.9 | 27.2 | 52.3 | **94.1** |
+| board power, aligned (W) | 24.4 | — | 31.5 | 35.7 |
+| energy per 4096² GEMV (mJ) | 32.0 | — | 11.6 | **8.4** |
+
+With 8 CUs (63k LUT, 624 DSP, WNS +0.016 ns) one GEMV costs 8.4 mJ, 4× less than the best CPU run.
+Logs: `results/multi_cu/`.
+
+### 10.3 Whole models on the card: GPT-2 small and Qwen3-0.6B
+
+`host/llm_fpga.py` runs a full decoder in NumPy and sends **every linear layer** to the card as a
+GEMV (weights resident in HBM, activations quantized per vector on the host). It supports GPT-2
+(2019) and Qwen3-0.6B (2025: RMSNorm, grouped-query attention, q/k norm, RoPE, SwiGLU), with
+weights loaded from the Hugging Face safetensors files (F32/BF16). `--check` compares every GEMV
+with the golden model. Perplexity on a held-out paragraph (204 / 203 tokens), greedy generation
+of 64 tokens:
+
+| Model / backend | Perplexity | Speed (tokens/s) | GEMVs checked, mismatches |
+|---|---:|---:|---|
+| GPT-2, CPU FP32 | 13.51 | 4.6 | — |
+| GPT-2, U280 L2, no smoothing | 66.06 | 8.6 | 9,996, 0 |
+| GPT-2, U280 L2, SmoothQuant α = 0.5 | **13.44** | 8.6 | 9,996, 0 |
+| GPT-2, U280 L3a, α = 0.5 | 13.44 | 28.0 | 9,996, 0 |
+| GPT-2, U280 L3b (fixed point), α = 0.5 | 13.50 | 28.1 | 9,996, 0 |
+| GPT-2, U280 4 × L3a aligned, α = 0.5 | — | **38.9** | — |
+| Qwen3-0.6B, CPU FP32 | 18.89 | 1.4 | — |
+| Qwen3-0.6B, U280 4 × L3a, no smoothing | 20.07 | 11.0 | 22,939, 0 |
+| Qwen3-0.6B, U280 4 × L3a, α = 0.5 | **19.01** | 11.1 | 22,939, 0 |
+| Qwen3-0.6B, U280 4 × L3a aligned, α = 0.5 | — | **14.3** | — |
+
+Findings:
+- **GPT-2 needs smoothing, Qwen3 does not.** Plain per-vector INT8 activations ruin GPT-2
+  (perplexity 13.5 → 66) because a few activation channels are ~100× larger than the rest.
+  SmoothQuant-style per-channel scaling (d_k = amax_k^α / wmax_k^(1−α), W' = W·d, x' = x/d,
+  calibrated on a different text; no hardware change) brings it back to 13.44. Qwen3 loses only
+  6% without smoothing and 0.6% with it.
+- The ~568 MiB of Qwen3 INT8 weights do not fit in one 256 MiB HBM bank, so Qwen3 runs on the
+  multi-CU bitstreams (rows split over 4 banks).
+- **8 CUs are slower than 4 for whole models** (GPT-2 26.4 vs 38.9 tokens/s, Qwen3 11.4 vs 14.3):
+  the model has 49 / 113 small GEMVs per token and each one now pays 8 launches from Python. The
+  card is idle most of the time. This motivates batching (10.4).
+
+Logs: `results/gpt2/`, `results/qwen3/`, `results/llm_on_fpga/`, `results/multi_cu/x{4,8}a_llm.out`.
+
+### 10.4 Batched kernel: one pass over the weights for up to 8 vectors
+
+`gemv_int8_ps_b` reads each 512-bit weight word once and multiplies it with the matching group of
+up to 8 activation vectors in the same cycle (8 × 64 INT8 multipliers). The per-vector arithmetic
+is exactly that of L3a, so every output is bit-exact against `golden_int8_ps`.
+
+The first version wrote `y[b·M + m]`: 8 separate 32-bit writes per row, to addresses M floats
+apart, which cannot form AXI bursts. On the board this cost ~0.44 ms per extra vector at M = 4096
+and made 8 vectors of the GPT-2 MLP (3072 × 768) 10× slower than one. `gemv_int8_ps_bw` packs the
+8 results of a row into one 256-bit word (`y[m]`, lane b = vector b), so the store is one
+sequential burst. Same compute, II = 1 and 300 MHz.
+
+| Vectors per call | 1 | 2 | 4 | 8 |
+|---|---:|---:|---:|---:|
+| 4096 × 4096, `_b` strided store (ms) | 1.365 | 1.367 | 1.780 | 3.536 |
+| 4096 × 4096, `_bw` burst store (ms) | 1.360 | 1.368 | 1.360 | **1.360** |
+| 3072 × 768, `_b` (ms) | 0.382 | 0.700 | 1.272 | 2.469 |
+| 3072 × 768, `_bw` (ms) | 0.233 | 0.248 | 0.244 | **0.240** |
+| 11008 × 4096, `_bw` (ms) | 3.506 | 3.506 | 3.507 | **3.505** |
+
+![batched kernel time](results/spec_decode/batch_time_vs_nb.png)
+
+With `_bw`, 8 vectors cost the same as one: 0.170 ms per 4096 × 4096 GEMV per vector, 8× the
+throughput of L3a from the same single HBM channel. All 32 (shape, nb) points are bit-exact
+(`results/spec_decode/kernel_bw/logs_spec/bench_batch_bw.csv`, `host/bench_batch.py`).
+
+**Batched perplexity.** Teacher forcing has all tokens available, so `llm_fpga.py --ppl` sends
+8 positions per weight pass: GPT-2 perplexity 13.436 (identical to token-by-token L3a), 9,996
+GEMVs checked with 0 mismatches, 1,274 weight passes instead of 9,996, and 0.36 s of kernel time
+instead of ~2.8 s.
+
+### 10.5 Speculative decoding with the batched kernel
+
+A single user generates one token at a time, so a batch needs several tokens to check.
+Speculative decoding provides them: guess the next k tokens cheaply, run all k + 1 positions
+through the model in one batched pass, keep the longest prefix the model agrees with plus one
+corrected token. We guess with **prompt lookup**: find the last 2–3 tokens earlier in the text and
+propose the tokens that followed them (no draft model). In `llm_fpga.py` the model code yields
+`(Linear, x)` requests instead of calling the GEMV; `step_multi` advances several positions in
+lock step, so each Linear is one kernel call for all of them, and position j attends to the K/V
+of positions < j exactly as in token-by-token decoding. The generated text is therefore
+**identical** to plain greedy decoding, which every run checks (`--ref`). One run also checked
+all 11,858 GEMVs against the golden model: 0 mismatches.
+
+GPT-2 small, smoothing α = 0.5, 128 new tokens, kernel `gemv_int8_ps_bw` (1 CU), generation phase
+only (the prompt is processed 8 tokens per pass in both cases); speculative = up to k = 7 guessed
+tokens from n-gram matches of length 2–3:
+
+| Prompt | Mode | Tokens per weight pass | Kernel ms / token | Tokens/s | Board W | J / token |
+|---|---|---:|---:|---:|---:|---:|
+| text ("Field-programmable gate arrays are") | one token per pass | 1.00 | 12.77 | 29.4 | 23.9 | 0.81 |
+| | speculative, k = 7 | 2.33 | 5.36 | **49.9** | 23.8 | **0.48** |
+| code (three short Python functions) | one token per pass | 1.00 | 13.34 | 24.3 | 23.8 | 0.98 |
+| | speculative, k = 7 | 5.82 | 2.15 | **59.8** | 23.8 | **0.40** |
+| question about a given paragraph | one token per pass | 1.00 | 13.24 | 24.1 | 24.0 | 1.00 |
+| | speculative, k = 7 | 6.74 | 1.85 | **60.7** | 23.8 | **0.39** |
+
+Qwen3-0.6B, same three prompts, 64 new tokens, `gemv_int8_ps_bw` with weights over 3 HBM banks
+(`kernels/gemv_int8_ps_bw_wide.cfg`, 1 CU):
+
+| Prompt | Mode | Tokens per weight pass | Kernel ms / token | Tokens/s | Board W | J / token |
+|---|---|---:|---:|---:|---:|---:|
+| text | one token per pass | 1.00 | 54.78 | 8.6 | 23.8 | 2.76 |
+| | speculative, k = 7 | 1.02 | 56.10 | 7.3 | 23.8 | 3.27 |
+| code | one token per pass | 1.00 | 57.64 | 7.0 | 23.8 | 3.42 |
+| | speculative, k = 7 | 1.36 | 41.05 | 7.8 | 23.8 | 3.06 |
+| question about a given paragraph | one token per pass | 1.00 | 57.11 | 6.2 | 23.8 | 3.83 |
+| | speculative, k = 7 | 4.27 | 12.59 | **16.0** | 23.7 | **1.48** |
+
+Batched perplexity for Qwen3: 19.008, identical to the token-by-token 4-CU result, 2,938 weight
+passes instead of 22,939 (1.40 s of kernel time).
+
+Findings:
+- Prompt lookup works best where the answer copies the context (questions about a document,
+  code): GPT-2 5.8–6.7 tokens per pass, **6–7× less kernel time per token** and **2.5× more
+  tokens/s**; Qwen3 on the question prompt 4.3 tokens per pass, 4.5× less kernel time, 2.6×
+  more tokens/s and 2.6× less energy per token.
+- It depends on the model: GPT-2 repeats itself, so even free text gains 1.7×. Qwen3 does not
+  repeat itself on free text (1.02 tokens per pass), so the guesses are wasted and it is 16%
+  slower; on code it gains only 1.1×. A draft model would be needed there.
+- One CU with speculative decoding (50–60 tokens/s) is faster than 4 CUs without it (38.9),
+  because it removes kernel calls instead of making each call shorter.
+- The card is now idle most of the time: 1.9–5.4 ms of kernel time per token vs 16–20 ms of
+  wall time. The rest is the NumPy host (attention, norms, quantization, Python per layer).
+  J/token is board power × generation time, so it falls with speed; it would fall further with
+  a faster host.
+- Matching only n-grams of length ≥ 2 avoids wasted guesses on free text (k = 7: 95 instead of
+  183 guessed tokens, 49.9 vs 40.3 tokens/s); k = 3 is slower than k = 7 on every prompt.
+
+Logs: `results/spec_decode/kernel_bw/logs_spec/` (`*_gpt2_bw2.log`: fair runs above;
+`spec_summary_gpt2_bw2.csv`: summary incl. power), the first kernel in `results/spec_decode/kernel_b_strided/`.
+Script: `scripts/run_spec_board.sh`, `scripts/summarize_spec.py`.
+
+## 11. Next steps
+
+- ~~L3: partial sums / fixed point, dataflow, several HBM channels~~ done (section 10).
+- ~~L3 target: 4096 × 4096 in ≤ 1.47 ms~~ done: 1.31 ms (1 CU), 0.24 ms (8 CUs).
+- ~~INT4 in hardware~~ done (section 10.1); next: INT4 whole-model accuracy with smoothing.
+- Host overhead: a C++ host (or XRT run lists) for the LLM driver; Python now takes more time
+  than the card per token.
+- Batched kernel on several CUs (batching × CUs), and more HBM channels per CU for Qwen3-size
+  models.
+- Real Llama-2-7B weights (needs K-splitting for the 11008-wide down projection) and a GPU baseline.
+
+## 12. Contributions
 
 Shuozhe Zhou wrote all code in this repository so far and ran all experiments
-(golden model, kernels, testbenches, host program, Makefile, builds and hardware
-runs on OCT, accuracy script and bit-width sweep, README and reports).
+(golden model, kernels, testbenches, host programs, LLM driver, Makefile, builds and
+hardware runs on OCT, accuracy script and bit-width sweep, README and reports).
 
 Yifan Zhu's planned parts for the final phase, committed under his own GitHub account:
 extracting real Llama-2-7B weights and activations as test inputs, the CPU/GPU
 baselines, and the accuracy analysis on real data. Shuozhe Zhou continues with the
 L3 kernel and the hardware runs.
 
-## 12. Code sources
+## 13. Code sources
 
 - `host/host.cpp` started from the XRT host program of the `hello_world_xrt` example
   in AMD/Xilinx Vitis_Accel_Examples (`host_xrt/hello_world_xrt`,
   https://github.com/Xilinx/Vitis_Accel_Examples), which we used in HW2. We kept its
   structure (open device, load xclbin, create buffers with `kernel.group_id`, run,
   sync); the test-case loading, timing, checking and CPU version are ours.
+- `host/llm_fpga.py` implements GPT-2 and Qwen3 from the published model architectures
+  (Hugging Face `transformers` configuration and weight names) in NumPy; no model code was
+  copied. The byte-level BPE tokenizer follows the GPT-2 scheme (`vocab.json`, `merges.txt`).
+  Smoothing follows the idea of SmoothQuant (Xiao et al., ICML 2023); prompt-lookup
+  speculative decoding follows the idea of prompt lookup decoding (Saxena, 2023) and
+  speculative decoding (Leviathan et al., ICML 2023).
 - Everything else (kernels, testbenches, scripts, Makefile, data format) was written
   by us. We use the Vitis HLS header `ap_int.h` and the XRT C++ API.

@@ -1,0 +1,83 @@
+mkdir -p build/gemv_int8_fx.sw_emu
+v++ -c -t sw_emu --platform xilinx_u280_gen3x16_xdma_1_202211_1 --save-temps --temp_dir build/gemv_int8_fx.sw_emu/_x --log_dir build/gemv_int8_fx.sw_emu/logs --report_dir build/gemv_int8_fx.sw_emu/reports -k gemv_int8_fx -I kernels -o build/gemv_int8_fx.sw_emu/gemv_int8_fx.xo kernels/gemv_int8_fx.cpp
+Option Map File Used: '/fpga/Xilinx/Vitis/2023.1/data/vitis/vpp/optMap.xml'
+
+****** v++ v2023.1 (64-bit)
+  **** SW Build 3860322 on 2023-05-04-06:32:48
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+
+INFO: [v++ 60-1306] Additional information associated with this v++ compile can be found at:
+	Reports: /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/reports/gemv_int8_fx
+	Log files: /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/logs/gemv_int8_fx
+Running Dispatch Server on port: 45423
+INFO: [v++ 60-1548] Creating build summary session with primary output /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/gemv_int8_fx.xo.compile_summary, at Tue Nov 24 21:33:41 2026
+INFO: [v++ 60-1315] Creating rulecheck session with output '/users/shuozhez/l3/build/gemv_int8_fx.sw_emu/reports/gemv_int8_fx/v++_compile_gemv_int8_fx_guidance.html', at Tue Nov 24 21:33:41 2026
+INFO: [v++ 60-895]   Target platform: /opt/xilinx/platforms/xilinx_u280_gen3x16_xdma_1_202211_1/xilinx_u280_gen3x16_xdma_1_202211_1.xpfm
+INFO: [v++ 60-1578]   This platform contains Xilinx Shell Archive '/opt/xilinx/platforms/xilinx_u280_gen3x16_xdma_1_202211_1/hw/hw.xsa'
+INFO: [v++ 74-78] Compiler Version string: 2023.1
+INFO: [v++ 60-585] Compiling for software emulation target
+INFO: [v++ 60-423]   Target device: xilinx_u280_gen3x16_xdma_1_202211_1
+INFO: [v++ 60-242] Creating kernel: 'gemv_int8_fx'
+INFO: [v++ 60-594] Finished kernel compilation
+INFO: [v++ 60-586] Created build/gemv_int8_fx.sw_emu/gemv_int8_fx.xo
+INFO: [v++ 60-2343] Use the vitis_analyzer tool to visualize and navigate the relevant reports. Run the following command. 
+    vitis_analyzer /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/gemv_int8_fx.xo.compile_summary 
+INFO: [v++ 60-791] Total elapsed time: 0h 0m 33s
+INFO: [v++ 60-1653] Closing dispatch client.
+v++ -l -t sw_emu --platform xilinx_u280_gen3x16_xdma_1_202211_1 --save-temps --temp_dir build/gemv_int8_fx.sw_emu/_x --log_dir build/gemv_int8_fx.sw_emu/logs --report_dir build/gemv_int8_fx.sw_emu/reports --jobs 4           --config kernels/gemv_int8_fx.cfg -o build/gemv_int8_fx.sw_emu/gemv_int8_fx.xclbin build/gemv_int8_fx.sw_emu/gemv_int8_fx.xo
+WARNING: [v++ 60-1600] The option 'jobs' was used directly on the command line, where its usage is deprecated. To ensure input line works for supported operating systems or shells, v++ supports specification for some options in a configuration file. As an alternative, please use options 'hls.jobs', 'vivado.synth.jobs' in a configuration file. 
+Option Map File Used: '/fpga/Xilinx/Vitis/2023.1/data/vitis/vpp/optMap.xml'
+
+****** v++ v2023.1 (64-bit)
+  **** SW Build 3860322 on 2023-05-04-06:32:48
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+
+INFO: [v++ 60-1306] Additional information associated with this v++ link can be found at:
+	Reports: /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/reports/link
+	Log files: /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/logs/link
+Running Dispatch Server on port: 33405
+INFO: [v++ 60-1548] Creating build summary session with primary output /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/gemv_int8_fx.xclbin.link_summary, at Tue Nov 24 21:34:17 2026
+INFO: [v++ 60-1315] Creating rulecheck session with output '/users/shuozhez/l3/build/gemv_int8_fx.sw_emu/reports/link/v++_link_gemv_int8_fx_guidance.html', at Tue Nov 24 21:34:17 2026
+INFO: [v++ 60-895]   Target platform: /opt/xilinx/platforms/xilinx_u280_gen3x16_xdma_1_202211_1/xilinx_u280_gen3x16_xdma_1_202211_1.xpfm
+INFO: [v++ 60-1578]   This platform contains Xilinx Shell Archive '/opt/xilinx/platforms/xilinx_u280_gen3x16_xdma_1_202211_1/hw/hw.xsa'
+INFO: [v++ 74-78] Compiler Version string: 2023.1
+INFO: [v++ 60-629] Linking for software emulation target
+INFO: [v++ 60-423]   Target device: xilinx_u280_gen3x16_xdma_1_202211_1
+INFO: [v++ 60-645] kernel flags are '-I /users/shuozhez/l3/kernels'
+Check POST-VPL, containing 1 checks, has run: 0 errors
+INFO: [v++ 60-586] Created build/gemv_int8_fx.sw_emu/gemv_int8_fx.xclbin
+INFO: [v++ 60-1307] Run completed. Additional information can be found in:
+	Guidance: /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/reports/link/v++_link_gemv_int8_fx_guidance.html
+	Steps Log File: /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/logs/link/link.steps.log
+
+INFO: [v++ 60-2343] Use the vitis_analyzer tool to visualize and navigate the relevant reports. Run the following command. 
+    vitis_analyzer /users/shuozhez/l3/build/gemv_int8_fx.sw_emu/gemv_int8_fx.xclbin.link_summary 
+INFO: [v++ 60-791] Total elapsed time: 0h 0m 20s
+INFO: [v++ 60-1653] Closing dispatch client.
+XCL_EMULATION_MODE=sw_emu EMCONFIG_PATH=/users/shuozhez/l3 ./build/gemv_host build/gemv_int8_fx.sw_emu/gemv_int8_fx.xclbin gemv_int8_fx data/n64_rand_s1 1
+case data/n64_rand_s1: M=64 K=64 kind=rand seed=1, kernel gemv_int8_fx, 1 timed run(s)
+device: xilinx_u280_gen3x16_xdma_1_202211_1, xclbin loaded in 49.2 ms
+Kernel Name: gemv_int8_fx_1, CU Number: 0, Thread creation status: success
+Kernel Name: gemv_int8_fx_1, CU Number: 0, State: Start
+Kernel Name: gemv_int8_fx_1, CU Number: 0, State: Running
+Kernel Name: gemv_int8_fx_1, CU Number: 0, State: Idle
+Kernel Name: gemv_int8_fx_1, CU Number: 0, State: Start
+Kernel Name: gemv_int8_fx_1, CU Number: 0, State: Running
+Kernel Name: gemv_int8_fx_1, CU Number: 0, State: Idle
+device process sw_emu_device done
+Kernel Name: gemv_int8_fx_1, CU Number: 0, Status: Shutdown
+INFO [HLS SIM]: The maximum depth reached by any hls::stream() instance in the design is 64
+
+kernel time   avg 4.770 ms  min 4.770 ms  max 4.770 ms  (1 runs)
+bytes read    0.0 MiB
+bandwidth     0.00 GB/s (bytes read / avg kernel time)
+PCIe          host->device 0.72 ms, device->host 0.245 ms
+CPU (1 thread, same op order) 0.021 ms
+
+FPGA vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+CPU  vs golden:
+  64 values: 64 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

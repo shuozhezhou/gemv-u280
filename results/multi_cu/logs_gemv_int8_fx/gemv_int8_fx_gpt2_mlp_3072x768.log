@@ -1,0 +1,14 @@
+case data/gpt2_mlp_3072x768: M=3072 K=768 kind=rand seed=1, kernel gemv_int8_fx, 2000 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 85.8 ms
+
+kernel time   avg 0.206 ms  min 0.201 ms  max 0.223 ms  (2000 runs)
+bytes read    2.4 MiB
+bandwidth     12.15 GB/s (bytes read / avg kernel time)
+PCIe          host->device 0.60 ms, device->host 0.017 ms
+CPU (1 thread, same op order) 1.605 ms
+
+FPGA vs golden:
+  3072 values: 3072 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+CPU  vs golden:
+  3072 values: 3072 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

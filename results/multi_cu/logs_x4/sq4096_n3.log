@@ -1,0 +1,14 @@
+case data/sq4096: M=4096 K=4096 kind=rand seed=1, kernel gemv_int8_ps x 3 CU(s), 2000 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 59.8 ms
+CU 1: rows 0..1365, banks Wq 0, s 1, xq 1, y 1
+CU 2: rows 1366..2730, banks Wq 65538, s 65539, xq 65539, y 65539
+CU 3: rows 2731..4095, banks Wq 131076, s 131077, xq 131077, y 131077
+
+kernel time   avg 0.476 ms  min 0.462 ms  max 0.507 ms  (2000 runs, 3 CUs)
+bytes read    17.0 MiB
+bandwidth     37.48 GB/s aggregate (bytes read / avg time), 12.49 GB/s per CU
+PCIe          host->device 4.93 ms
+
+FPGA vs golden:
+  4096 values: 4096 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

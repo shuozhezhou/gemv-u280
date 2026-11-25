@@ -1,0 +1,2 @@
+cannot open data/n64_onehot_s1/y_int4.f32.bin
+case data/n64_onehot_s1: M=64 K=64 kind=onehot seed=1, kernel gemv_int4_ps, 100 timed run(s)

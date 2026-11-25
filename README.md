@@ -8,10 +8,17 @@ Shuozhe Zhou, Yifan Zhu
 > [`project-update2`](https://github.com/shuozhezhou/gemv-u280/tree/project-update2);
 > it does not change after the deadline. New in this update: accuracy metrics against
 > the true result (section 7), a bit-width design-space exploration (section 8), where
-> the input data comes from (section 3.1), who does what (section 10) and the code we
-> started from (section 11). `main` keeps moving.
+> the input data comes from (section 3.1), who does what (section 11) and the code we
+> started from (section 12). `main` keeps moving.
 > The report for this update is
 > [`reports/ProjectUpdate2-ShuozheZhou-YifanZhu.pdf`](reports/ProjectUpdate2-ShuozheZhou-YifanZhu.pdf).
+>
+> **After the deadline (Nov 24 evening)** we ran more experiments on the same two bitstreams:
+> a size sweep from 256 × 256 to Llama-2-7B layer shapes, board power and energy per GEMV,
+> a fitted cycle model, and a fair multi-threaded CPU baseline with RAPL energy (section 9).
+> Supplement report:
+> [`reports/ProjectUpdate2-Supplement-ShuozheZhou-YifanZhu.pdf`](reports/ProjectUpdate2-Supplement-ShuozheZhou-YifanZhu.pdf)
+> (the submitted report plus section 4.3).
 >
 > Project Update 1 is frozen as branch and release
 > [`project-update-1`](https://github.com/shuozhezhou/gemv-u280/tree/project-update-1).
@@ -344,17 +351,85 @@ What this shows:
   error) is a possible middle point.
 - This sweep is software only. Hardware runs at other bit widths are planned (L4).
 
-## 9. Next steps
+## 9. Size sweep, power and a fair CPU baseline (Nov 24)
+
+Same L1 / L2 bitstreams, node pc157. Every run below passed the bit-exact check (tolerance 0).
+Scripts: `scripts/gen_sweep.py` (data), `scripts/run_sweep.sh` (board runs + power sampling with
+`xbutil examine -r electrical`), `host/cpu_bench.cpp` + `scripts/run_cpu_bench.sh` (CPU baseline),
+`scripts/analyze_sweep.py` (tables and figures). Raw logs and outputs: `results/hw_sweep/`.
+
+| Shape (M × K) | L1 FP32 (ms) | L2 INT8 (ms) | INT8 GB/s | L1 / L2 |
+|---|---:|---:|---:|---:|
+| 256 × 256 | 1.582 | 0.139 | 0.50 | 11× |
+| 512 × 512 | 6.179 | 0.293 | 0.95 | 21× |
+| 768 × 768 (GPT-2 attention) | 13.834 | 0.506 | 1.24 | 27× |
+| 1024 × 1024 | 24.548 | 0.763 | 1.46 | 32× |
+| 3072 × 768 (GPT-2 MLP) | 55.194 | 1.910 | 1.31 | 29× |
+| 2048 × 2048 | 97.987 | 2.245 | 1.99 | 44× |
+| 4096 × 4096 (Llama-2-7B attention) | 391.669 | 7.500 | 2.38 | 52× |
+| 11008 × 4096 (Llama-2-7B FFN gate/up) | 1052.505 | 20.084 | 2.39 | 52× |
+
+![time vs size](results/hw_sweep/figures/time_vs_size.png)
+
+**Cycle model** (`results/hw_sweep/cycle_model.txt`). A least-squares fit of
+cycles = c0 + c_row·M + c_grp·(M·K/64) over the nine shapes: FP32 costs **7.00 cycles per
+weight** (the fadd latency, II = 7; fit error 0.3%); INT8 costs **6.99 cycles per 64-weight
+group** plus ~100 cycles per row and ~37 µs per call (fit error 4.5%). At II = 1 per group (L3)
+the per-row cost would become the largest term for 4096 × 4096 unless rows overlap.
+
+**Power and energy** (`results/hw_sweep/power_summary.txt`). Board power: 19.4 W shell only,
+22.8 W with our xclbin loaded, 23.3 W while INT8 runs, 22.8 W while FP32 runs. The kernel adds
+< 0.5 W, so energy ≈ static power × time. One 4096 × 4096 GEMV: **8.92 J (L1) vs 0.175 J (L2),
+51× less energy**.
+
+**Fair CPU baseline** (`results/hw_sweep/cpu_vs_fpga.txt`). The 23.7 ms CPU number in section 6
+is a single-thread loop in the golden model's order. `host/cpu_bench.cpp` does the same INT8 math
+with OpenMP + AVX-512 on the node's 2 × Xeon Gold 6226R, streaming W from DRAM (rotating copies of
+more than 512 MiB), energy from RAPL (package + DRAM, both sockets).
+
+| 4096 × 4096 GEMV | Time (ms) | Power (W) | Energy (mJ) |
+|---|---:|---:|---:|
+| U280 L1 FP32 (board) | 391.669 | 22.8 | 8918 |
+| U280 L2 INT8 (board) | 7.500 | 23.3 | 174.6 |
+| CPU INT8, 1 thread | 2.532 | 99 | 250.4 |
+| CPU INT8, 8 threads | 0.346 | 161 | 55.6 |
+| CPU INT8, 32 threads | 0.102 | 342 | 35.0 |
+| CPU FP32, 32 threads | 0.300 | 311 | 93.5 |
+
+![energy vs time](results/hw_sweep/figures/energy_vs_time_cpu_fpga.png)
+
+The CPU is 70× faster than L2 (about 160 GB/s from DRAM vs 2.4 GB/s from HBM) but draws ~340 W.
+At ~23 W the U280 matches the best CPU energy per GEMV once a 4096 × 4096 GEMV takes
+**≤ 1.47 ms**. That is the L3 target; matching the CPU's time too needs ~160 GB/s, i.e.
+weights spread over at least 12 HBM pseudo-channels.
+
+**L3, first numbers (synthesis estimate only; board run pending).** Two new INT8 kernels
+remove the II = 7 chain: `gemv_int8_ps` (8 interleaved FP32 partial sums + fixed adder tree)
+and `gemv_int8_fx` (fixed-point `ap_fixed<48,24>` accumulation), with the rows × groups loop
+flattened and a dataflow pipeline. Both pass C simulation bit-exactly against their own goldens
+(7 small cases + 4096 × 4096, tolerance 0). Vitis HLS: **262,313 cycles for 4096 × 4096 =
+0.874 ms at 300 MHz**, one 64-weight group per cycle with no per-row overhead, 8.6× fewer
+cycles than L2. Expected on the board: ~1.2 ms (one HBM pseudo-channel ≈ 14.4 GB/s < 19.2 GB/s
+needed), still below the 1.47 ms energy crossover. Hardware builds are running; the code will be
+pushed with the board results.
+
+**Llama-2-7B, one decode token** (`results/hw_sweep/llama7b_token_estimate.txt`):
+32 layers × (4 × 4096² + 3 × 11008 × 4096) GEMVs = 151 s/token with L1, 2.9 s/token with L2
+(~67 J/token on the board). The down projection (K = 11008) exceeds MAX_K = 4096 and is
+counted at the gate/up time.
+
+## 10. Next steps
 
 - L3: remove the II = 7 FP32 accumulation chain, either with several partial sums or
   by accumulating in fixed point (`ap_fixed`), overlap load / compute / store with
   dataflow, and spread rows over several HBM pseudo-channels; target ≥ 70% of the peak
   bandwidth of the channels used.
-- Hardware runs at 256 × 256 and 1024 × 1024 in addition to 4096 × 4096.
+- ~~Hardware runs at 256 × 256 and 1024 × 1024~~ done, see section 9.
+- L3 target from section 9: 4096 × 4096 in ≤ 1.47 ms (energy parity with a 2-socket Xeon).
 - Other bit widths in hardware (INT4 / `ap_int`), guided by section 8.
-- Real Llama-2-7B weights and recorded activations as inputs; CPU and GPU baselines.
+- Real Llama-2-7B weights and recorded activations as inputs; GPU baseline (CPU baseline done, section 9).
 
-## 10. Contributions
+## 11. Contributions
 
 Shuozhe Zhou wrote all code in this repository so far and ran all experiments
 (golden model, kernels, testbenches, host program, Makefile, builds and hardware
@@ -365,7 +440,7 @@ extracting real Llama-2-7B weights and activations as test inputs, the CPU/GPU
 baselines, and the accuracy analysis on real data. Shuozhe Zhou continues with the
 L3 kernel and the hardware runs.
 
-## 11. Code sources
+## 12. Code sources
 
 - `host/host.cpp` started from the XRT host program of the `hello_world_xrt` example
   in AMD/Xilinx Vitis_Accel_Examples (`host_xrt/hello_world_xrt`,

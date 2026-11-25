@@ -1,0 +1,3 @@
+Llama-2-7B, one decode token = 32 layers x (4 x 4096x4096 + 3 x 11008x4096) GEMVs, measured kernel times
+gemv_fp32  layer   4724.17 ms   token   151.17 s  ( 0.007 tok/s)   board energy/token ~  3446.8 J   CPU 1-thread same op order  17.07 s/token
+gemv_int8  layer     90.27 ms   token     2.89 s  ( 0.346 tok/s)   board energy/token ~    67.1 J   CPU 1-thread same op order   8.83 s/token

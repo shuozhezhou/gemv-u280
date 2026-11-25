@@ -1,0 +1,1 @@
+idle CPU package+dram power over 10 s: 87.55172620000000000000 W

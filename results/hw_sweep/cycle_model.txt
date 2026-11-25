@@ -1,0 +1,8 @@
+Least-squares fit of measured kernel cycles (300 MHz): cycles = c0 + c_row*M + c_grp*(M*K/64)
+gemv_fp32  c0 =    14837 cyc ( 49.5 us)   c_row =     8.9 cyc   c_grp =  448.026 cyc per 64 weights (7.000 per weight)   max fit error 0.27 %
+gemv_int8  c0 =    11026 cyc ( 36.8 us)   c_row =    99.2 cyc   c_grp =    6.988 cyc per 64 weights (0.109 per weight)   max fit error 4.52 %
+
+Reading: FP32 = 7.00 cycles per weight (fadd latency, II=7). INT8 = 6.99 cycles per 64-weight group
+(same II=7, now per group) + ~100 cycles per row + ~37 us per call. With II=1 per group (L3) the group
+term for 4096x4096 drops from 1.835 M to 0.262 M cycles, so the per-row term (~0.41 M) would dominate
+unless rows are overlapped.

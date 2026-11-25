@@ -1,0 +1,21 @@
+21:05:17 gemv_int8 sq256: kernel time   avg 0.139 ms  min 0.137 ms  max 0.148 ms  (1000 runs) | TEST PASSED
+21:05:21 gemv_fp32 sq256: kernel time   avg 1.582 ms  min 1.578 ms  max 1.589 ms  (200 runs) | TEST PASSED
+21:05:26 gemv_int8 sq512: kernel time   avg 0.293 ms  min 0.291 ms  max 0.331 ms  (1000 runs) | TEST PASSED
+21:05:31 gemv_fp32 sq512: kernel time   avg 6.179 ms  min 6.176 ms  max 6.192 ms  (200 runs) | TEST PASSED
+21:05:36 gemv_int8 sq1024: kernel time   avg 0.763 ms  min 0.755 ms  max 0.804 ms  (1000 runs) | TEST PASSED
+21:05:45 gemv_fp32 sq1024: kernel time   avg 24.548 ms  min 24.545 ms  max 24.562 ms  (200 runs) | TEST PASSED
+21:05:52 gemv_int8 sq2048: kernel time   avg 2.245 ms  min 2.240 ms  max 2.261 ms  (1000 runs) | TEST PASSED
+21:06:16 gemv_fp32 sq2048: kernel time   avg 97.987 ms  min 97.981 ms  max 98.018 ms  (200 runs) | TEST PASSED
+21:06:21 gemv_int8 gpt2_attn_768x768: kernel time   avg 0.506 ms  min 0.502 ms  max 0.546 ms  (1000 runs) | TEST PASSED
+21:06:29 gemv_fp32 gpt2_attn_768x768: kernel time   avg 13.834 ms  min 13.831 ms  max 13.852 ms  (200 runs) | TEST PASSED
+21:06:36 gemv_int8 gpt2_mlp_3072x768: kernel time   avg 1.910 ms  min 1.905 ms  max 1.924 ms  (1000 runs) | TEST PASSED
+21:06:52 gemv_fp32 gpt2_mlp_3072x768: kernel time   avg 55.194 ms  min 55.189 ms  max 55.228 ms  (200 runs) | TEST PASSED
+21:07:01 gemv_int8 sq4096: kernel time   avg 7.503 ms  min 7.496 ms  max 7.531 ms  (500 runs) | TEST PASSED
+21:07:25 gemv_fp32 sq4096: kernel time   avg 391.673 ms  min 391.659 ms  max 391.695 ms  (50 runs) | TEST PASSED
+21:07:34 gemv_int8 llama7b_attn_4096x4096: kernel time   avg 7.505 ms  min 7.500 ms  max 7.522 ms  (500 runs) | TEST PASSED
+21:07:59 gemv_fp32 llama7b_attn_4096x4096: kernel time   avg 391.664 ms  min 391.657 ms  max 391.690 ms  (50 runs) | TEST PASSED
+21:08:10 gemv_int8 llama7b_ffn_11008x4096: kernel time   avg 20.084 ms  min 20.081 ms  max 20.104 ms  (300 runs) | TEST PASSED
+21:08:48 gemv_fp32 llama7b_ffn_11008x4096: kernel time   avg 1052.505 ms  min 1052.486 ms  max 1052.525 ms  (30 runs) | TEST PASSED
+21:09:13 gemv_int8 sq4096: kernel time   avg 7.500 ms  min 7.496 ms  max 7.535 ms  (2700 runs) | TEST PASSED
+21:09:38 gemv_fp32 sq4096: kernel time   avg 391.669 ms  min 391.660 ms  max 391.693 ms  (50 runs) | TEST PASSED
+SWEEP DONE

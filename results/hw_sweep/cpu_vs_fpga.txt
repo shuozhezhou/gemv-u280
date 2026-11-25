@@ -1,0 +1,42 @@
+CPU: 2x Xeon Gold 6226R (32 cores / 64 threads), g++ -O3 -march=native -fopenmp, AVX-512.
+Energy = RAPL package + DRAM of both sockets (includes CPU idle ~87.55 W).
+cold = W rotated over >= 512 MiB of copies so each GEMV streams from DRAM. FPGA energy = U280 board power x time.
+
+sq4096
+  impl                                 ms/GEMV    GB/s      W   mJ/GEMV
+  U280 L1 FP32                         391.669    0.17   22.8    8918.3
+  U280 L2 INT8                           7.500    2.38   23.3     174.6
+  CPU int8 1 thr (cold)                  2.532     6.6     99     250.4
+  CPU fp32 1 thr (cold)                  5.291    12.7    100     526.3
+  CPU int8 4 thr (cold)                  0.662    25.4    126      83.2
+  CPU fp32 4 thr (cold)                  1.477    45.5    127     187.7
+  CPU int8 8 thr (cold)                  0.346    48.5    161      55.6
+  CPU fp32 8 thr (cold)                  0.801    83.7    163     130.6
+  CPU int8 16 thr (cold)                 0.179    93.7    220      39.4
+  CPU fp32 16 thr (cold)                 0.437   153.7    220      96.3
+  CPU int8 32 thr (cold)                 0.102   163.9    342      35.0
+  CPU fp32 32 thr (cold)                 0.300   223.3    311      93.5
+  CPU int8 64 thr (cold)                 0.096   175.1    357      34.2
+  CPU fp32 64 thr (cold)                 0.321   209.3    308      98.8
+  -> best CPU INT8 energy 34.2 mJ (64 thr). At 23.3 W the U280 matches it when a
+     GEMV takes <= 1.47 ms (energy crossover); L2 takes 7.50 ms.
+
+llama7b_ffn_11008x4096
+  impl                                 ms/GEMV    GB/s      W   mJ/GEMV
+  U280 L1 FP32                        1052.505    0.17   22.8   24014.4
+  U280 L2 INT8                          20.084    2.39   23.2     466.4
+  CPU int8 1 thr (cold)                  6.569     6.9    110     719.4
+  CPU fp32 1 thr (cold)                 14.206    12.7    108    1533.2
+  CPU int8 4 thr (cold)                  1.793    25.1    131     234.7
+  CPU fp32 4 thr (cold)                  3.854    46.8    134     518.3
+  CPU int8 8 thr (cold)                  0.918    49.1    174     159.4
+  CPU fp32 8 thr (cold)                  2.076    86.9    178     369.4
+  CPU int8 16 thr (cold)                 0.463    97.3    234     108.5
+  CPU fp32 16 thr (cold)                 1.065   169.4    238     253.9
+  CPU int8 32 thr (cold)                 0.251   179.4    345      86.6
+  CPU fp32 32 thr (cold)                 0.790   228.3    315     249.0
+  CPU int8 64 thr (cold)                 0.226   199.6    369      83.3
+  CPU fp32 64 thr (cold)                 0.822   219.3    283     232.5
+  -> best CPU INT8 energy 83.3 mJ (64 thr). At 23.2 W the U280 matches it when a
+     GEMV takes <= 3.59 ms (energy crossover); L2 takes 20.08 ms.
+

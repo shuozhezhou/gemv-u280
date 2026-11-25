@@ -1,0 +1,14 @@
+case data/llama7b_attn_4096x4096: M=4096 K=4096 kind=rand seed=1, kernel gemv_int8, 500 timed run(s)
+device: xilinx_u280_gen3x16_xdma_base_1, xclbin loaded in 5000.0 ms
+
+kernel time   avg 7.505 ms  min 7.500 ms  max 7.522 ms  (500 runs)
+bytes read    17.0 MiB
+bandwidth     2.38 GB/s (bytes read / avg kernel time)
+PCIe          host->device 4.78 ms, device->host 0.027 ms
+CPU (1 thread, same op order) 23.689 ms
+
+FPGA vs golden:
+  4096 values: 4096 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+CPU  vs golden:
+  4096 values: 4096 bit-exact, 0 mismatches, max err 0 x max|y| (tol 0)
+TEST PASSED

@@ -1,0 +1,14 @@
+U280 board power, xbutil examine -r electrical, ~1 sample/s (node pc157)
+idle, before this sweep's xclbin loads : 19.41 W  (n=12)
+idle, user xclbin loaded, no kernel    : 22.81 W  (n=7)
+gemv_fp32  sq1024                    22.68 W  (+-0.13 W over loaded idle, n= 4)  energy/GEMV    556.77 mJ board,   -3.280 mJ dynamic
+gemv_fp32  gpt2_mlp_3072x768         22.81 W  (+-0.00 W over loaded idle, n=10)  energy/GEMV   1259.11 mJ board,   -0.123 mJ dynamic
+gemv_fp32  sq2048                    22.77 W  (+-0.04 W over loaded idle, n=18)  energy/GEMV   2230.72 mJ board,   -4.821 mJ dynamic
+gemv_fp32  sq4096                    22.77 W  (+-0.04 W over loaded idle, n=18)  energy/GEMV   8918.29 mJ board,  -17.495 mJ dynamic
+gemv_fp32  llama7b_attn_4096x4096    22.77 W  (+-0.04 W over loaded idle, n=18)  energy/GEMV   8917.64 mJ board,  -18.024 mJ dynamic
+gemv_fp32  llama7b_ffn_11008x4096    22.82 W  (+ 0.01 W over loaded idle, n=29)  energy/GEMV  24014.39 mJ board,    1.881 mJ dynamic
+gemv_int8  sq4096                    23.27 W  (+ 0.46 W over loaded idle, n=18)  energy/GEMV    174.55 mJ board,    3.443 mJ dynamic
+gemv_int8  llama7b_attn_4096x4096    23.25 W  (+ 0.44 W over loaded idle, n= 3)  energy/GEMV    174.49 mJ board,    3.263 mJ dynamic
+gemv_int8  llama7b_ffn_11008x4096    23.22 W  (+ 0.41 W over loaded idle, n= 5)  energy/GEMV    466.42 mJ board,    8.208 mJ dynamic
+
+4096x4096: energy per GEMV FP32 8918 mJ vs INT8 174.6 mJ -> 51.1x less energy with INT8
